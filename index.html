@@ -1,17 +1,144 @@
-import React, { useState, useEffect } from 'react';
-import { Cpu, Code, Copy, Check, Info, Activity, Wifi, Thermometer } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi Python Club - Weather Station</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.css">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        body { background-color: #0f172a; color: #e2e8f0; font-family: sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
 
-const App = () => {
-  // 1. REPLACE THE URL BELOW WITH YOUR DIRECT IMAGE LINK
-  // Example: "https://i.postimg.cc/your-image/drawing.png"
-  const USER_IMAGE_URL = "https://i.imgur.com/lUz0ih0.png";
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="flex items-center justify-between mb-8 bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-500/20 p-3 rounded-xl">
+                    <i data-lucide="activity" class="w-8 h-8 text-blue-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Pi Python Club</h1>
+                    <p class="text-slate-400 text-sm">Pico W + DHT11 Weather Station</p>
+                </div>
+            </div>
+            <div class="hidden md:block text-right">
+                <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Status</span><br>
+                <span class="text-emerald-400 text-sm font-mono">System Online</span>
+            </div>
+        </header>
 
-  const [activeTab, setActiveTab] = useState('setup');
-  const [copied, setCopied] = useState(false);
-  const [simulating, setSimulating] = useState(false);
-  const [simData, setSimData] = useState({ temp: 24, hum: 60 });
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Column: Diagram and Stats -->
+            <div class="lg:col-span-7 flex flex-col gap-6">
+                <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-2xl">
+                    <div class="p-4 bg-slate-800/50 border-b border-slate-700 flex justify-between items-center">
+                        <span class="text-sm font-semibold text-slate-300">Project Hardware View</span>
+                    </div>
+                    
+                    <div class="p-8 flex flex-col items-center justify-center bg-[#0f172a] min-h-[400px]">
+                        <!-- CHANGE YOUR IMAGE URL HERE -->
+                        <img id="fritzingImage" 
+                             src="https://i.imgur.com/lUz0ih0.png" 
+                             alt="Fritzing Drawing" 
+                             class="max-w-full max-h-[400px] object-contain rounded-xl shadow-2xl">
+                        
+                        <div class="mt-8 grid grid-cols-3 gap-4 w-full max-w-md">
+                            <div class="flex flex-col items-center p-3 rounded-xl bg-slate-900 border border-slate-700 text-center">
+                                <div class="w-3 h-3 rounded-full bg-red-500 mb-2 shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
+                                <span class="text-[10px] uppercase text-slate-500">Power (GP15)</span>
+                            </div>
+                            <div class="flex flex-col items-center p-3 rounded-xl bg-slate-900 border border-slate-700 text-center">
+                                <div class="w-3 h-3 rounded-full bg-green-500 mb-2 shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>
+                                <span class="text-[10px] uppercase text-slate-500">WiFi (GP14)</span>
+                            </div>
+                            <div class="flex flex-col items-center p-3 rounded-xl bg-slate-900 border border-slate-700 text-center">
+                                <div id="dataLed" class="w-3 h-3 rounded-full mb-2 bg-blue-900"></div>
+                                <span class="text-[10px] uppercase text-slate-500">Data (GP13)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  const microPythonCode = `import network
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-3xl border border-slate-700 shadow-xl flex items-center justify-between">
+                    <div class="flex items-center gap-6">
+                        <div class="flex flex-col">
+                            <span class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Temperature</span>
+                            <div class="flex items-baseline gap-1">
+                                <span id="tempVal" class="text-3xl font-mono text-orange-400">24</span>
+                                <span class="text-slate-500">°C</span>
+                            </div>
+                        </div>
+                        <div class="h-10 w-[1px] bg-slate-700"></div>
+                        <div class="flex flex-col">
+                            <span class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Humidity</span>
+                            <div class="flex items-baseline gap-1">
+                                <span id="humVal" class="text-3xl font-mono text-blue-400">60</span>
+                                <span class="text-slate-500">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="simulateUpload()" id="uploadBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex items-center gap-2">
+                        <i data-lucide="wifi" class="w-4 h-4"></i>
+                        <span>Send Test Data</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column: Tabs -->
+            <div class="lg:col-span-5 flex flex-col h-[650px]">
+                <div class="flex p-1.5 bg-slate-800 rounded-2xl mb-4 border border-slate-700">
+                    <button onclick="showTab('setup')" id="tab-setup" class="flex-1 py-3 rounded-xl text-sm font-bold bg-slate-700 text-white">Setup</button>
+                    <button onclick="showTab('code')" id="tab-code" class="flex-1 py-3 rounded-xl text-sm font-bold text-slate-500">Code</button>
+                </div>
+
+                <div class="bg-slate-800 rounded-3xl border border-slate-700 flex-grow overflow-hidden flex flex-col shadow-2xl">
+                    <!-- Setup Content -->
+                    <div id="content-setup" class="p-8 overflow-y-auto custom-scrollbar">
+                        <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                            <i data-lucide="info" class="text-blue-400"></i> Wiring Guide
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="p-4 bg-slate-900 rounded-2xl border border-slate-700">
+                                <span class="text-red-400 text-xs font-bold uppercase tracking-tighter">LED Indicators</span>
+                                <ul class="mt-3 space-y-3 text-sm">
+                                    <li class="flex justify-between border-b border-slate-800 pb-2">
+                                        <span class="text-slate-400">Power (Red)</span>
+                                        <span class="text-white font-mono bg-slate-800 px-2 rounded">GP15</span>
+                                    </li>
+                                    <li class="flex justify-between border-b border-slate-800 pb-2">
+                                        <span class="text-slate-400">WiFi (Green)</span>
+                                        <span class="text-white font-mono bg-slate-800 px-2 rounded">GP14</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span class="text-slate-400">Data (Blue)</span>
+                                        <span class="text-white font-mono bg-slate-800 px-2 rounded">GP13</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-slate-900 rounded-2xl border border-slate-700">
+                                <span class="text-emerald-400 text-xs font-bold uppercase tracking-tighter">Sensor Pin</span>
+                                <div class="mt-3 flex justify-between text-sm">
+                                    <span class="text-slate-400">DHT11 Data</span>
+                                    <span class="text-white font-mono bg-slate-800 px-2 rounded">GP16</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Code Content -->
+                    <div id="content-code" class="hidden flex flex-col h-full">
+                        <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
+                            <span class="text-xs font-mono text-slate-400">main.py</span>
+                            <button onclick="copyCode()" class="bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">Copy Code</button>
+                        </div>
+                        <div class="p-6 bg-[#0d1117] overflow-y-auto flex-grow font-mono text-[11px] text-slate-300 custom-scrollbar">
+<pre id="pythonCode">import network
 import time
 import dht
 import urequests
@@ -41,231 +168,72 @@ wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 wlan.connect(WIFI_SSID, WIFI_PASS)
 
-print("Connecting to WiFi...")
 while not wlan.isconnected():
-    led_wifi.toggle() # Blink Green while connecting
+    led_wifi.toggle() 
     time.sleep(0.5)
     
-led_wifi.value(1) # Solid Green when connected
-print("Connected!")
+led_wifi.value(1) 
 
 while True:
     try:
         sensor.measure()
         temp = sensor.temperature()
         hum = sensor.humidity()
-        
-        # Prepare ThingSpeak URL
         url = f"https://api.thingspeak.com/update?api_key={THINGSPEAK_API_KEY}&field1={temp}&field2={hum}"
         
-        # Blink Blue LED during data transmission
         led_data.value(1)
         response = urequests.get(url)
-        print("Data sent:", response.text)
         response.close()
         led_data.value(0)
         
-    except Exception as e:
-        print("Error:", e)
-        
-    time.sleep(20) # Update every 20 seconds
-`;
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(microPythonCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const triggerUpdate = () => {
-    setSimulating(true);
-    setTimeout(() => {
-      setSimData({
-        temp: Math.floor(Math.random() * 10) + 22,
-        hum: Math.floor(Math.random() * 20) + 50,
-      });
-      setSimulating(false);
-    }, 1500);
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 font-sans p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex items-center justify-between mb-8 bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
-          <div className="flex items-center gap-4">
-            <div className="bg-blue-500/20 p-3 rounded-xl">
-              <Activity className="w-8 h-8 text-blue-400" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">Pi Python Club</h1>
-              <p className="text-slate-400 text-sm">Pico W + DHT11 + 3-LED Status System</p>
-            </div>
-          </div>
-          <div className="hidden md:flex gap-4">
-             <div className="flex flex-col items-end">
-                <span className="text-xs text-slate-500 uppercase font-bold tracking-wider">Status</span>
-                <span className="text-emerald-400 text-sm font-mono">System Online</span>
-             </div>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Diagram Section */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
-            <div className="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-2xl">
-              <div className="p-4 bg-slate-800/50 border-b border-slate-700 flex justify-between items-center">
-                <span className="text-sm font-semibold text-slate-300">Project Hardware View</span>
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
-                </div>
-              </div>
-              
-              <div className="p-8 flex flex-col items-center justify-center bg-[#0f172a] min-h-[400px]">
-                <img 
-                  src={USER_IMAGE_URL} 
-                  alt="Custom Fritzing Drawing" 
-                  className="max-w-full max-h-[400px] object-contain rounded-xl shadow-2xl transition-all duration-500"
-                  onError={(e) => {
-                    e.target.src = "https://via.placeholder.com/600x400/1e293b/475569?text=Waiting+for+Image+URL...";
-                  }}
-                />
-                
-                <div className="mt-8 grid grid-cols-3 gap-4 w-full max-w-md">
-                   <div className="flex flex-col items-center p-3 rounded-xl bg-slate-900 border border-slate-700">
-                      <div className="w-3 h-3 rounded-full bg-red-500 mb-2 shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
-                      <span className="text-[10px] uppercase text-slate-500">Power (GP15)</span>
-                   </div>
-                   <div className="flex flex-col items-center p-3 rounded-xl bg-slate-900 border border-slate-700">
-                      <div className="w-3 h-3 rounded-full bg-green-500 mb-2 shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>
-                      <span className="text-[10px] uppercase text-slate-500">WiFi (GP14)</span>
-                   </div>
-                   <div className="flex flex-col items-center p-3 rounded-xl bg-slate-900 border border-slate-700">
-                      <div className={`w-3 h-3 rounded-full mb-2 ${simulating ? 'bg-blue-400 animate-ping' : 'bg-blue-900'} transition-all`}></div>
-                      <span className="text-[10px] uppercase text-slate-500">Data (GP13)</span>
-                   </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-3xl border border-slate-700 shadow-xl flex items-center justify-between">
-              <div className="flex items-center gap-6">
-                <div className="flex flex-col">
-                  <span className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Temperature</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-mono text-orange-400">{simData.temp}</span>
-                    <span className="text-slate-500">°C</span>
-                  </div>
-                </div>
-                <div className="h-10 w-[1px] bg-slate-700"></div>
-                <div className="flex flex-col">
-                  <span className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Humidity</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-mono text-blue-400">{simData.hum}</span>
-                    <span className="text-slate-500">%</span>
-                  </div>
-                </div>
-              </div>
-              <button 
-                onClick={triggerUpdate}
-                disabled={simulating}
-                className="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex items-center gap-2"
-              >
-                {simulating ? <Activity className="animate-spin w-4 h-4" /> : <Wifi className="w-4 h-4" />}
-                {simulating ? 'Uploading...' : 'Send Test Data'}
-              </button>
-            </div>
-          </div>
-
-          {/* Right Column (Tabs) */}
-          <div className="lg:col-span-5 flex flex-col h-[650px]">
-            <div className="flex p-1.5 bg-slate-800 rounded-2xl mb-4 border border-slate-700">
-              <button 
-                onClick={() => setActiveTab('setup')} 
-                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'setup' ? 'bg-slate-700 text-white shadow-inner' : 'text-slate-500 hover:text-slate-300'}`}
-              >
-                <Cpu size={16} /> Setup
-              </button>
-              <button 
-                onClick={() => setActiveTab('code')} 
-                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'code' ? 'bg-slate-700 text-white shadow-inner' : 'text-slate-500 hover:text-slate-300'}`}
-              >
-                <Code size={16} /> Code
-              </button>
-            </div>
-
-            <div className="bg-slate-800 rounded-3xl border border-slate-700 flex-grow overflow-hidden flex flex-col shadow-2xl">
-              {activeTab === 'setup' ? (
-                <div className="p-8 overflow-y-auto custom-scrollbar">
-                  <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                    <Info className="text-blue-400" /> Wiring Guide
-                  </h3>
-                  <div className="space-y-6">
-                    <div className="p-4 bg-slate-900 rounded-2xl border border-slate-700">
-                      <span className="text-red-400 text-xs font-bold uppercase tracking-tighter">LED Indicators</span>
-                      <ul className="mt-3 space-y-3 text-sm">
-                        <li className="flex justify-between border-b border-slate-800 pb-2">
-                          <span className="text-slate-400">Power (Red)</span>
-                          <span className="text-white font-mono bg-slate-800 px-2 rounded">GP15</span>
-                        </li>
-                        <li className="flex justify-between border-b border-slate-800 pb-2">
-                          <span className="text-slate-400">WiFi (Green)</span>
-                          <span className="text-white font-mono bg-slate-800 px-2 rounded">GP14</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span className="text-slate-400">Data (Blue)</span>
-                          <span className="text-white font-mono bg-slate-800 px-2 rounded">GP13</span>
-                        </li>
-                      </ul>
+    except:
+        pass
+    time.sleep(20)</pre>
+                        </div>
                     </div>
-                    
-                    <div className="p-4 bg-slate-900 rounded-2xl border border-slate-700">
-                      <span className="text-emerald-400 text-xs font-bold uppercase tracking-tighter">Sensor Pin</span>
-                      <div className="mt-3 flex justify-between text-sm">
-                        <span className="text-slate-400">DHT11 Data</span>
-                        <span className="text-white font-mono bg-slate-800 px-2 rounded">GP16</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3 p-4 bg-amber-900/10 border border-amber-900/30 rounded-2xl">
-                       <Info size={20} className="text-amber-500 flex-shrink-0" />
-                       <p className="text-xs text-amber-200/70 leading-relaxed">
-                         Don't forget the current limiting resistors (220Ω) for the LEDs to prevent damaging your Pico W!
-                       </p>
-                    </div>
-                  </div>
                 </div>
-              ) : (
-                <div className="flex flex-col h-full">
-                  <div className="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
-                    <span className="text-xs font-mono text-slate-400">main.py</span>
-                    <button 
-                      onClick={copyToClipboard}
-                      className="flex items-center gap-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
-                    >
-                      {copied ? <Check size={14} /> : <Copy size={14} />}
-                      {copied ? 'Copied' : 'Copy'}
-                    </button>
-                  </div>
-                  <div className="p-6 bg-[#0d1117] overflow-y-auto flex-grow font-mono text-xs text-slate-300 custom-scrollbar leading-relaxed">
-                    <pre><code>{microPythonCode}</code></pre>
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
         </div>
-      </div>
-
-      <style dangerouslySetInnerHTML={{__html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
-      `}} />
     </div>
-  );
-};
 
-export default App;
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+
+        function showTab(tab) {
+            document.getElementById('content-setup').classList.add('hidden');
+            document.getElementById('content-code').classList.add('hidden');
+            document.getElementById('tab-setup').className = 'flex-1 py-3 rounded-xl text-sm font-bold text-slate-500';
+            document.getElementById('tab-code').className = 'flex-1 py-3 rounded-xl text-sm font-bold text-slate-500';
+            
+            document.getElementById('content-' + tab).classList.remove('hidden');
+            document.getElementById('tab-' + tab).className = 'flex-1 py-3 rounded-xl text-sm font-bold bg-slate-700 text-white';
+        }
+
+        function simulateUpload() {
+            const btn = document.getElementById('uploadBtn');
+            const dataLed = document.getElementById('dataLed');
+            btn.disabled = true;
+            btn.innerHTML = 'Uploading...';
+            dataLed.classList.add('bg-blue-400', 'animate-ping');
+
+            setTimeout(() => {
+                document.getElementById('tempVal').innerText = Math.floor(Math.random() * 5) + 22;
+                document.getElementById('humVal').innerText = Math.floor(Math.random() * 10) + 55;
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="wifi" class="w-4 h-4"></i><span>Send Test Data</span>';
+                dataLed.classList.remove('bg-blue-400', 'animate-ping');
+                dataLed.classList.add('bg-blue-900');
+                lucide.createIcons();
+            }, 1500);
+        }
+
+        function copyCode() {
+            const code = document.getElementById('pythonCode').innerText;
+            navigator.clipboard.writeText(code);
+            alert('Code copied to clipboard!');
+        }
+    </script>
+</body>
+</html>
