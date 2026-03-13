@@ -25,10 +25,10 @@
                 </h1>
             </div>
             <div class="flex gap-2">
-                <button onclick="saveCodeToClipboard()" class="admin-only bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-full text-xs font-bold transition-all shadow-lg shadow-emerald-600/20" fdprocessedid="vg447">
+                <button onclick="saveCodeToClipboard()" class="admin-only bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-full text-xs font-bold transition-all shadow-lg shadow-emerald-600/20" fdprocessedid="5z65ls">
                     COPY UPDATED CODE
                 </button>
-                <button onclick="document.getElementById('main-body').classList.toggle('admin-mode')" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2" fdprocessedid="67o6i">
+                <button onclick="document.getElementById('main-body').classList.toggle('admin-mode')" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2" fdprocessedid="d7vofe">
                     ⚙️ ADMIN
                 </button>
             </div>
@@ -45,14 +45,14 @@
 
     <!-- Search & Filters -->
     <div class="max-w-md mx-auto px-6 mb-8">
-        <input type="text" id="search-input" oninput="renderItems()" placeholder="Search my creations..." class="w-full bg-black border border-slate-800 rounded-xl p-3 text-white outline-none focus:ring-2 ring-sky-500 transition-all" fdprocessedid="8k082">
+        <input type="text" id="search-input" oninput="renderItems()" placeholder="Search my creations..." class="w-full bg-black border border-slate-800 rounded-xl p-3 text-white outline-none focus:ring-2 ring-sky-500 transition-all" fdprocessedid="j6yg3u">
     </div>
 
     <div class="flex justify-center mb-12 px-6">
         <div class="inline-flex p-1.5 bg-slate-900/50 rounded-2xl border border-white/5 backdrop-blur-sm">
-            <button onclick="setFilter('all')" id="tab-all" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold transition-all bg-sky-500 text-white" fdprocessedid="ed1np">All</button>
-            <button onclick="setFilter('project')" id="tab-project" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white" fdprocessedid="enc0n7b">Projects</button>
-            <button onclick="setFilter('tutorial')" id="tab-tutorial" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white" fdprocessedid="r08e4j">Tutorials</button>
+            <button onclick="setFilter('all')" id="tab-all" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold transition-all bg-sky-500 text-white" fdprocessedid="4v42l">All</button>
+            <button onclick="setFilter('project')" id="tab-project" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white" fdprocessedid="jyhgya">Projects</button>
+            <button onclick="setFilter('tutorial')" id="tab-tutorial" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white" fdprocessedid="u25wtr">Tutorials</button>
         </div>
     </div>
 
@@ -65,11 +65,11 @@
                 <div class="space-y-4">
                     <div>
                         <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Creation Title</label>
-                        <input type="text" id="add-title" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 focus:ring-2 ring-sky-500 outline-none" fdprocessedid="u8k1pa">
+                        <input type="text" id="add-title" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 focus:ring-2 ring-sky-500 outline-none" fdprocessedid="zvbm8e">
                     </div>
                     <div>
                         <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Type</label>
-                        <select id="add-category" onchange="updateBuilder()" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 outline-none" fdprocessedid="upzkw">
+                        <select id="add-category" onchange="updateBuilder()" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 outline-none" fdprocessedid="cb3j2r">
                             <option value="Project">Project (Folder: projects/)</option>
                             <option value="Tutorial">Tutorial (Folder: tutorials/)</option>
                         </select>
@@ -81,9 +81,9 @@
                         <label class="text-[10px] font-bold text-slate-500 uppercase block mb-2">Target Filename</label>
                         <div class="flex items-center gap-2 bg-black/40 p-2 rounded-lg border border-white/10">
                             <span id="folder-prefix" class="text-sky-500/60 font-mono text-xs font-bold">projects/</span>
-                            <input type="text" id="add-filename" oninput="updateBuilder()" placeholder="my_code.html" class="bg-transparent outline-none font-mono text-xs text-sky-400 flex-grow" fdprocessedid="iyt7f4">
+                            <input type="text" id="add-filename" oninput="updateBuilder()" placeholder="my_code.html" class="bg-transparent outline-none font-mono text-xs text-sky-400 flex-grow" fdprocessedid="4hvt9i">
                         </div>
-                        <p id="preview-text" class="mt-2 text-[9px] font-mono text-slate-500 italic">Expected location: \ClubFolder\projects\my_code.html</p>
+                        <p id="preview-text" class="mt-2 text-[9px] font-mono text-slate-500 italic">Expected location: \ClubFolder\projects\thingspeak.html</p>
                     </div>
                     <div>
                         <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Brief Description</label>
@@ -92,7 +92,7 @@
                 </div>
             </div>
             
-            <button onclick="createNewItem()" class="w-full mt-6 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-4 rounded-2xl transition-all" fdprocessedid="ty7yvn">
+            <button onclick="createNewItem()" class="w-full mt-6 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-4 rounded-2xl transition-all" fdprocessedid="c2b5ap">
                 ADD TO LOCAL PORTAL
             </button>
         </div>
@@ -100,27 +100,6 @@
 
     <!-- Content Grid -->
     <main id="content-grid" class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
-                <div class="card bg-slate-900/40 border border-white/5 rounded-3xl p-6 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-sky-500/10 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-sky-500 transition-all duration-300">
-                            🚀
-                        </div>
-                        <span class="text-[9px] font-black bg-white/5 px-3 py-1 rounded-full text-slate-500 border border-white/5">
-                            PROJECT
-                        </span>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2 group-hover:text-sky-400 transition-colors">Weather Station</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-2">Monitors local temperature and humidity via Python.</p>
-                    <div class="flex gap-2 mt-auto">
-                        <a href="projects/weather.html" target="_blank" class="flex-grow bg-white/5 hover:bg-sky-500 hover:text-white border border-white/10 text-center py-3 rounded-2xl text-xs font-bold transition-all">
-                            OPEN FILE
-                        </a>
-                        <button onclick="deleteItem(1)" class="admin-only bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white p-3 rounded-2xl transition-all" fdprocessedid="r9hlhz8">
-                            🗑️
-                        </button>
-                    </div>
-                </div>
-            
                 <div class="card bg-slate-900/40 border border-white/5 rounded-3xl p-6 group">
                     <div class="flex justify-between items-start mb-6">
                         <div class="w-12 h-12 bg-sky-500/10 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-sky-500 transition-all duration-300">
@@ -136,7 +115,28 @@
                         <a href="tutorials/basics.html" target="_blank" class="flex-grow bg-white/5 hover:bg-sky-500 hover:text-white border border-white/10 text-center py-3 rounded-2xl text-xs font-bold transition-all">
                             OPEN FILE
                         </a>
-                        <button onclick="deleteItem(2)" class="admin-only bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white p-3 rounded-2xl transition-all" fdprocessedid="gi8yse">
+                        <button onclick="deleteItem(2)" class="admin-only bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white p-3 rounded-2xl transition-all" fdprocessedid="obk5l">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="card bg-slate-900/40 border border-white/5 rounded-3xl p-6 group">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-12 bg-sky-500/10 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-sky-500 transition-all duration-300">
+                            🚀
+                        </div>
+                        <span class="text-[9px] font-black bg-white/5 px-3 py-1 rounded-full text-slate-500 border border-white/5">
+                            PROJECT
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-sky-400 transition-colors">Thingspeak</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-2">thingspeak</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="projects/thingspeak.html" target="_blank" class="flex-grow bg-white/5 hover:bg-sky-500 hover:text-white border border-white/10 text-center py-3 rounded-2xl text-xs font-bold transition-all">
+                            OPEN FILE
+                        </a>
+                        <button onclick="deleteItem(1773386514634)" class="admin-only bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white p-3 rounded-2xl transition-all" fdprocessedid="ffadgp">
                             🗑️
                         </button>
                     </div>
@@ -151,18 +151,18 @@
         // == LOCAL DATABASE ==
         var items = [
           {
-                    "id": 1,
-                    "title": "Weather Station",
-                    "category": "Project",
-                    "link": "projects/weather.html",
-                    "desc": "Monitors local temperature and humidity via Python."
-          },
-          {
                     "id": 2,
                     "title": "Python Basics",
                     "category": "Tutorial",
                     "link": "tutorials/basics.html",
                     "desc": "Essential concepts for beginners."
+          },
+          {
+                    "id": 1773386514634,
+                    "title": "Thingspeak",
+                    "category": "Project",
+                    "link": "projects/thingspeak.html",
+                    "desc": "thingspeak"
           }
 ];
         // == END DATABASE ==
