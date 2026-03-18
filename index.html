@@ -1,0 +1,343 @@
+import React, { useState, useEffect } from 'react';
+import { initializeApp, getApps } from 'firebase/app';
+import { 
+  getFirestore, 
+  collection, 
+  onSnapshot, 
+  addDoc, 
+  deleteDoc, 
+  doc, 
+  query 
+} from 'firebase/firestore';
+import { 
+  getAuth, 
+  signInAnonymously, 
+  signInWithCustomToken, 
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { 
+  Cpu, 
+  BookOpen, 
+  PlusCircle, 
+  Trash2, 
+  Lock, 
+  Unlock, 
+  ExternalLink, 
+  Code, 
+  Bot, 
+  Terminal, 
+  Lightbulb,
+  AlertCircle,
+  X
+} from 'lucide-react';
+
+// --- HYBRID INITIALIZATION ---
+let db = null;
+let auth = null;
+let appId = 'pi-python-makers';
+let isFirebaseAvailable = false;
+
+try {
+  if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+    const firebaseConfig = JSON.parse(__firebase_config);
+    const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+    auth = getAuth(app);
+    db = getFirestore(app);
+    appId = typeof __app_id !== 'undefined' ? __app_id : 'pi-python-makers';
+    isFirebaseAvailable = true;
+  }
+} catch (e) {
+  console.warn("Firebase config not found. Running in Local/Demo mode.");
+}
+
+const ICON_MAP = {
+  'fa-microchip': <Cpu size={20} />,
+  'fa-code': <Code size={20} />,
+  'fa-robot': <Bot size={20} />,
+  'fa-terminal': <Terminal size={20} />,
+  'fa-lightbulb': <Lightbulb size={20} />,
+  'fa-book-open': <BookOpen size={20} />
+};
+
+export default function App() {
+  const [items, setItems] = useState([]);
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [currentTab, setCurrentTab] = useState('all');
+  const [loading, setLoading] = useState(true);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    title: '',
+    category: 'Project',
+    link: '',
+    icon: 'fa-microchip',
+    desc: ''
+  });
+
+  const [fileName, setFileName] = useState('');
+
+  // 1. Initialize Auth
+  useEffect(() => {
+    if (!isFirebaseAvailable) {
+      setLoading(false);
+      setItems([
+        { id: '1', title: 'Thingspeak Weather Station', category: 'Project', link: 'projects/thingspeak.html', desc: 'Monitors local temperature and humidity via Python.', icon: 'fa-microchip' },
+        { id: '2', title: 'Python Basics', category: 'Tutorial', link: 'tutorials/basics.html', desc: 'Essential concepts for beginners.', icon: 'fa-code' }
+      ]);
+      return;
+    }
+
+    const initAuth = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (error) {
+        console.error("Auth error:", error);
+      }
+    };
+    initAuth();
+    const unsubscribe = onAuthStateChanged(auth, setUser);
+    return () => unsubscribe();
+  }, []);
+
+  // 2. Fetch Data
+  useEffect(() => {
+    if (!user || !isFirebaseAvailable) return;
+
+    const publicDataRef = collection(db, 'artifacts', appId, 'public', 'data', 'content');
+    const q = query(publicDataRef);
+
+    const unsubscribe = onSnapshot(q, 
+      (snapshot) => {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setItems(data);
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Firestore error:", error);
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Sync link with filename input
+  useEffect(() => {
+    const folder = formData.category.toLowerCase() === 'project' ? 'projects/' : 'tutorials/';
+    setFormData(prev => ({ ...prev, link: `${folder}${fileName}` }));
+  }, [fileName, formData.category]);
+
+  const handleAddItem = async (e) => {
+    e.preventDefault();
+    if (!formData.title || !fileName) return alert("Title and Filename are required.");
+
+    if (!isFirebaseAvailable) {
+      // Local demo mode logic
+      const newItem = { id: Date.now().toString(), ...formData };
+      setItems([newItem, ...items]);
+    } else {
+      // Cloud mode logic
+      try {
+        const publicDataRef = collection(db, 'artifacts', appId, 'public', 'data', 'content');
+        await addDoc(publicDataRef, { ...formData, createdAt: Date.now() });
+      } catch (error) {
+        alert("Error saving to cloud: " + error.message);
+      }
+    }
+    
+    // Reset form
+    setFormData({ title: '', category: 'Project', link: '', icon: 'fa-microchip', desc: '' });
+    setFileName('');
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this entry?")) return;
+
+    if (!isFirebaseAvailable) {
+      setItems(items.filter(item => item.id !== id));
+    } else {
+      try {
+        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'content', id));
+      } catch (error) {
+        alert("Error deleting: " + error.message);
+      }
+    }
+  };
+
+  const filteredItems = items.filter(item => {
+    if (currentTab === 'all') return true;
+    return item.category.toLowerCase() === currentTab;
+  });
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-50 font-sans pb-20">
+      <nav className="border-b border-white/5 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 p-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg shadow-sky-500/20">π</div>
+            <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">Pi Python Makers</h1>
+          </div>
+          <button 
+            onClick={() => setIsAdmin(!isAdmin)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+              isAdmin ? 'bg-rose-500 border-rose-400 text-white shadow-lg shadow-rose-500/20' : 'bg-white/5 border-white/10 hover:bg-white/10'
+            }`}
+          >
+            {isAdmin ? <Unlock size={14} /> : <Lock size={14} />}
+            {isAdmin ? 'Exit Admin' : 'Admin Mode'}
+          </button>
+        </div>
+      </nav>
+
+      {!isFirebaseAvailable && (
+        <div className="max-w-4xl mx-auto mt-6 px-6">
+          <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl flex items-center gap-3 text-amber-200 text-xs">
+            <AlertCircle size={16} />
+            <span>Local Preview Mode: Changes will reset on refresh unless connected to Cloud Storage.</span>
+          </div>
+        </div>
+      )}
+
+      {/* ADMIN PANEL */}
+      {isAdmin && (
+        <section className="max-w-4xl mx-auto px-6 mt-8 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="bg-slate-900 border border-sky-500/30 rounded-3xl p-8 shadow-2xl">
+            <h3 className="text-xl font-bold text-sky-400 mb-6 flex items-center gap-2">
+              <PlusCircle size={20} /> Add New Portal Entry
+            </h3>
+            
+            <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Title</label>
+                  <input 
+                    type="text" 
+                    value={formData.title}
+                    onChange={e => setFormData({...formData, title: e.target.value})}
+                    className="w-full bg-slate-950 border border-white/10 rounded-xl p-3 focus:ring-2 ring-sky-500 outline-none transition-all"
+                    placeholder="e.g. Weather Station"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Type</label>
+                  <select 
+                    value={formData.category}
+                    onChange={e => setFormData({...formData, category: e.target.value})}
+                    className="w-full bg-slate-950 border border-white/10 rounded-xl p-3 outline-none"
+                  >
+                    <option value="Project">Project (Folder: projects/)</option>
+                    <option value="Tutorial">Tutorial (Folder: tutorials/)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Icon Style</label>
+                  <div className="flex gap-2 bg-slate-950 p-2 rounded-xl border border-white/10">
+                    {Object.keys(ICON_MAP).map(iconKey => (
+                      <button
+                        key={iconKey}
+                        type="button"
+                        onClick={() => setFormData({...formData, icon: iconKey})}
+                        className={`p-2 rounded-lg transition-all ${formData.icon === iconKey ? 'bg-sky-500 text-white' : 'hover:bg-white/5 text-slate-500'}`}
+                      >
+                        {ICON_MAP[iconKey]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Target Filename</label>
+                  <div className="flex items-center gap-2 bg-slate-950 p-3 rounded-xl border border-white/10">
+                    <span className="text-sky-500/50 font-mono text-xs">{formData.category.toLowerCase() === 'project' ? 'projects/' : 'tutorials/'}</span>
+                    <input 
+                      type="text" 
+                      value={fileName}
+                      onChange={e => setFileName(e.target.value)}
+                      placeholder="index.html"
+                      className="bg-transparent outline-none font-mono text-xs text-sky-400 flex-grow"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Description</label>
+                  <textarea 
+                    value={formData.desc}
+                    onChange={e => setFormData({...formData, desc: e.target.value})}
+                    className="w-full bg-slate-950 border border-white/10 rounded-xl p-3 h-[105px] outline-none resize-none text-sm"
+                    placeholder="Briefly describe this creation..."
+                  ></textarea>
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                className="md:col-span-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-4 rounded-2xl transition-all shadow-lg shadow-sky-500/20"
+              >
+                ADD TO PORTAL
+              </button>
+            </form>
+          </div>
+        </section>
+      )}
+
+      <header className="max-w-4xl mx-auto text-center pt-16 pb-12 px-6">
+        <h2 className="text-5xl md:text-6xl font-black mb-6 leading-tight">Build. Code. <span className="text-sky-400">Create.</span></h2>
+        <p className="text-slate-400 text-lg">The central hub for Pi Python Makers.</p>
+      </header>
+
+      <div className="flex justify-center mb-12 px-6">
+        <div className="inline-flex p-1.5 bg-slate-900/50 rounded-2xl border border-white/5 backdrop-blur-sm">
+          {['all', 'project', 'tutorial'].map((tab) => (
+            <button key={tab} onClick={() => setCurrentTab(tab)} className={`px-6 py-2.5 rounded-xl text-sm font-bold capitalize transition-all ${currentTab === tab ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-white'}`}>{tab}s</button>
+          ))}
+        </div>
+      </div>
+
+      <main className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loading ? (
+          <div className="col-span-full text-center py-20 text-slate-500 animate-pulse uppercase tracking-widest text-xs">Loading Content...</div>
+        ) : filteredItems.length === 0 ? (
+          <div className="col-span-full text-center py-20 border border-dashed border-white/10 rounded-3xl text-slate-500">
+            No items found. Switch to Admin mode to add some!
+          </div>
+        ) : (
+          filteredItems.map((item) => (
+            <div key={item.id} className="group bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:border-sky-500/50 transition-all hover:-translate-y-1 flex flex-col h-full shadow-lg relative">
+              <div className="flex justify-between items-start mb-6">
+                <div className="p-3 bg-sky-500/10 text-sky-400 rounded-2xl group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">
+                  {ICON_MAP[item.icon] || <Cpu size={20} />}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest bg-white/5 px-2.5 py-1 rounded-full text-slate-400 border border-white/5">{item.category}</span>
+                  {isAdmin && (
+                    <button 
+                      onClick={() => handleDelete(item.id)}
+                      className="p-1.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg transition-all"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                </div>
+              </div>
+              <h3 className="text-xl font-bold mb-3 group-hover:text-sky-400 transition-colors">{item.title}</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow line-clamp-3">{item.desc}</p>
+              <a 
+                href={item.link} 
+                className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 py-3.5 rounded-2xl text-sm font-bold transition-all border border-white/5"
+              >
+                Launch {item.category} <ExternalLink size={14} className="opacity-50" />
+              </a>
+            </div>
+          ))
+        )}
+      </main>
+    </div>
+  );
+}

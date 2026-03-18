@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi Python Club - Weather Station</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.css">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        body { background-color: #0f172a; color: #e2e8f0; font-family: sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="flex items-center justify-between mb-8 bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-500/20 p-3 rounded-xl">
+                    <i data-lucide="activity" class="w-8 h-8 text-blue-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Pi Python Club</h1>
+                    <p class="text-slate-400 text-sm">Thingspeak + DHT11 Weather Station</p>
+                </div>
+            </div>
+            <div class="hidden md:block text-right">
+                <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Status</span><br>
+                <span class="text-emerald-400 text-sm font-mono">System Online</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Column: Diagram and Stats -->
+            <div class="lg:col-span-7 flex flex-col gap-6">
+                <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-2xl">
+                    <div class="p-4 bg-slate-800/50 border-b border-slate-700 flex justify-between items-center">
+                        <span class="text-sm font-semibold text-slate-300">Project Hardware View</span>
+                    </div>
+                    
+                    <div class="p-8 flex flex-col items-center justify-center bg-[#0f172a] min-h-[400px]">
+                        <!-- IMAGE URL -->
+                        <img id="fritzingImage" 
+                             src="https://i.imgur.com/EcJHCxa.png" 
+                             alt="Fritzing Drawing" 
+                             class="max-w-full max-h-[400px] object-contain rounded-xl shadow-2xl">
+                        
+                        <div class="mt-8 grid grid-cols-3 gap-4 w-full max-w-md">
+                            <div class="flex flex-col items-center p-3 rounded-xl bg-slate-900 border border-slate-700 text-center">
+                                <div class="w-3 h-3 rounded-full bg-red-500 mb-2 shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
+                                <span class="text-[10px] uppercase text-slate-500">Power (GP15)</span>
+                            </div>
+                            <div class="flex flex-col items-center p-3 rounded-xl bg-slate-900 border border-slate-700 text-center">
+                                <div class="w-3 h-3 rounded-full bg-green-500 mb-2 shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>
+                                <span class="text-[10px] uppercase text-slate-500">WiFi (GP14)</span>
+                            </div>
+                            <div class="flex flex-col items-center p-3 rounded-xl bg-slate-900 border border-slate-700 text-center">
+                                <div id="dataLed" class="w-3 h-3 rounded-full mb-2 bg-blue-900"></div>
+                                <span class="text-[10px] uppercase text-slate-500">Data (GP13)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-3xl border border-slate-700 shadow-xl flex items-center justify-between">
+                    <div class="flex items-center gap-6">
+                        <div class="flex flex-col">
+                            <span class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Temperature</span>
+                            <div class="flex items-baseline gap-1">
+                                <span id="tempVal" class="text-3xl font-mono text-orange-400">24</span>
+                                <span class="text-slate-500">°C</span>
+                            </div>
+                        </div>
+                        <div class="h-10 w-[1px] bg-slate-700"></div>
+                        <div class="flex flex-col">
+                            <span class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Humidity</span>
+                            <div class="flex items-baseline gap-1">
+                                <span id="humVal" class="text-3xl font-mono text-blue-400">60</span>
+                                <span class="text-slate-500">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="simulateUpload()" id="uploadBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex items-center gap-2">
+                        <i data-lucide="wifi" class="w-4 h-4"></i>
+                        <span>Send Test Data</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column: Tabs -->
+            <div class="lg:col-span-5 flex flex-col h-[650px]">
+                <div class="flex p-1.5 bg-slate-800 rounded-2xl mb-4 border border-slate-700">
+                    <button onclick="showTab('setup')" id="tab-setup" class="flex-1 py-3 rounded-xl text-sm font-bold bg-slate-700 text-white transition-all">Setup</button>
+                    <button onclick="showTab('code')" id="tab-code" class="flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 transition-all">Code</button>
+                    <button onclick="showTab('explain')" id="tab-explain" class="flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 transition-all">Explain</button>
+                </div>
+
+                <div class="bg-slate-800 rounded-3xl border border-slate-700 flex-grow overflow-hidden flex flex-col shadow-2xl">
+                    <!-- Setup Content -->
+                    <div id="content-setup" class="p-8 overflow-y-auto custom-scrollbar">
+                        <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                            <i data-lucide="info" class="text-blue-400"></i> Wiring Guide
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="p-4 bg-slate-900 rounded-2xl border border-slate-700">
+                                <span class="text-red-400 text-xs font-bold uppercase tracking-tighter">LED Indicators</span>
+                                <ul class="mt-3 space-y-3 text-sm">
+                                    <li class="flex justify-between border-b border-slate-800 pb-2">
+                                        <span class="text-slate-400">Power (Red)</span>
+                                        <span class="text-white font-mono bg-slate-800 px-2 rounded">GP15</span>
+                                    </li>
+                                    <li class="flex justify-between border-b border-slate-800 pb-2">
+                                        <span class="text-slate-400">WiFi (Green)</span>
+                                        <span class="text-white font-mono bg-slate-800 px-2 rounded">GP14</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span class="text-slate-400">Data (Blue)</span>
+                                        <span class="text-white font-mono bg-slate-800 px-2 rounded">GP13</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-slate-900 rounded-2xl border border-slate-700">
+                                <span class="text-emerald-400 text-xs font-bold uppercase tracking-tighter">Sensor Pin</span>
+                                <div class="mt-3 flex justify-between text-sm">
+                                    <span class="text-slate-400">DHT11 Data</span>
+                                    <span class="text-white font-mono bg-slate-800 px-2 rounded">GP16</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Code Content -->
+                    <div id="content-code" class="hidden flex flex-col h-full">
+                        <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
+                            <span class="text-xs font-mono text-slate-400">main.py</span>
+                            <button onclick="copyCode()" class="bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">Copy Code</button>
+                        </div>
+                        <div class="p-6 bg-[#0d1117] overflow-y-auto flex-grow font-mono text-[11px] text-slate-300 custom-scrollbar">
+<pre id="pythonCode">import network
+import time
+import dht
+import urequests
+from machine import Pin
+
+# --- Configuration ---
+WIFI_SSID = "Your_WiFi_SSID"
+WIFI_PASS = "Your_WiFi_Password"
+THINGSPEAK_API_KEY = "Your_Write_API_Key"
+DHT_PIN = 16 # GP16
+
+# --- LED Setup ---
+led_pwr = Pin(15, Pin.OUT)   # Red: Power (GP15)
+led_wifi = Pin(14, Pin.OUT)  # Green: WiFi (GP14)
+led_data = Pin(13, Pin.OUT)  # Blue: Data (GP13)
+
+# Power LED ON
+led_pwr.value(1)
+
+# --- Setup DHT Sensor ---
+sensor = dht.DHT11(Pin(DHT_PIN))
+
+# --- Connect to Wi-Fi ---
+wlan = network.WLAN(network.STA_IF)
+wlan.active(True)
+wlan.connect(WIFI_SSID, WIFI_PASS)
+
+while not wlan.isconnected():
+    led_wifi.toggle() 
+    time.sleep(0.5)
+    
+led_wifi.value(1) # WiFi connected!
+
+while True:
+    # 1. Read the weather
+    sensor.measure()
+    temp = sensor.temperature()
+    hum = sensor.humidity()
+    
+    # 2. Build the link
+    url = f"https://api.thingspeak.com/update?api_key={THINGSPEAK_API_KEY}&field1={temp}&field2={hum}"
+    
+    # 3. Send to web and blink Blue LED
+    led_data.value(1)
+    response = urequests.get(url)
+    response.close()
+    led_data.value(0)
+    
+    # 4. Wait for next update
+    time.sleep(20)</pre>
+                        </div>
+                    </div>
+
+                    <!-- Explain Content -->
+                    <div id="content-explain" class="hidden p-8 overflow-y-auto custom-scrollbar">
+                        <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                            <i data-lucide="book-open" class="text-emerald-400"></i> Code Breakdown
+                        </h3>
+                        <div class="space-y-6 text-sm text-slate-400 leading-relaxed">
+                            <section>
+                                <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                    <span class="w-1 h-4 bg-emerald-500 rounded"></span> 1. The Imports
+                                </h4>
+                                <p>We start by bringing in "tools" (libraries). <code class="text-blue-400">network</code> handles WiFi, <code class="text-blue-400">dht</code> reads the sensor, and <code class="text-blue-400">machine.Pin</code> lets us control the hardware pins.</p>
+                            </section>
+
+                            <section>
+                                <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                    <span class="w-1 h-4 bg-emerald-500 rounded"></span> 2. Pin Definitions
+                                </h4>
+                                <p>We tell Python which pin does what. For example, <code class="text-slate-200 font-mono">Pin(15, Pin.OUT)</code> sets GP15 as an output (sending power out) for the Red LED.</p>
+                            </section>
+
+                            <section>
+                                <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                    <span class="w-1 h-4 bg-emerald-500 rounded"></span> 3. WiFi Connection
+                                </h4>
+                                <p>The <code class="text-slate-200 font-mono">while not wlan.isconnected()</code> loop is smart—it keeps blinking the Green LED until the Pico successfully grabs a signal from your router.</p>
+                            </section>
+
+                            <section>
+                                <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                    <span class="w-1 h-4 bg-emerald-500 rounded"></span> 4. Reading & Sending
+                                </h4>
+                                <p>This runs forever in a loop. It asks the DHT11 for the weather, builds a web address containing that data, and sends it to ThingSpeak. The Blue LED blinks during the send so you can see the activity!</p>
+                            </section>
+
+                            <div class="p-4 bg-blue-900/20 border border-blue-800 rounded-2xl">
+                                <p class="text-[11px] text-blue-200 uppercase font-bold tracking-tight">Lesson Note: We kept this code simple. In future lessons, we will learn how to add "Error Catching" so the program doesn't stop if the WiFi signal is weak.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+
+        function showTab(tab) {
+            // Hide all
+            document.getElementById('content-setup').classList.add('hidden');
+            document.getElementById('content-code').classList.add('hidden');
+            document.getElementById('content-explain').classList.add('hidden');
+            
+            // Reset button styles
+            document.getElementById('tab-setup').className = 'flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 transition-all';
+            document.getElementById('tab-code').className = 'flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 transition-all';
+            document.getElementById('tab-explain').className = 'flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 transition-all';
+            
+            // Show active
+            document.getElementById('content-' + tab).classList.remove('hidden');
+            document.getElementById('tab-' + tab).className = 'flex-1 py-3 rounded-xl text-sm font-bold bg-slate-700 text-white transition-all shadow-inner';
+        }
+
+        function simulateUpload() {
+            const btn = document.getElementById('uploadBtn');
+            const dataLed = document.getElementById('dataLed');
+            btn.disabled = true;
+            btn.innerHTML = 'Uploading...';
+            dataLed.classList.add('bg-blue-400', 'animate-ping');
+
+            setTimeout(() => {
+                document.getElementById('tempVal').innerText = Math.floor(Math.random() * 5) + 22;
+                document.getElementById('humVal').innerText = Math.floor(Math.random() * 10) + 55;
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="wifi" class="w-4 h-4"></i><span>Send Test Data</span>';
+                dataLed.classList.remove('bg-blue-400', 'animate-ping');
+                dataLed.classList.add('bg-blue-900');
+                lucide.createIcons();
+            }, 1500);
+        }
+
+        function copyCode() {
+            const code = document.getElementById('pythonCode').innerText;
+            navigator.clipboard.writeText(code);
+            alert('Code copied to clipboard!');
+        }
+    </script>
+</body>
+</html>
