@@ -76,7 +76,7 @@
         .code-block {
             background: #000;
             color: #4ade80;
-            font-family: 'Fira Code', monospace;
+            font-family: 'Consolas', 'Monaco', monospace;
             padding: 1.5rem;
             border-radius: 0.75rem;
             font-size: 0.85rem;
@@ -86,7 +86,6 @@
         .tab-content { display: none; }
         .active-content { display: grid; }
         
-        /* Ensure image fits nicely */
         .schematic-img {
             max-width: 100%;
             max-height: 100%;
@@ -97,11 +96,10 @@
 </head>
 <body class="p-4 md:p-8">
 
-    <!-- Header Section -->
     <header class="max-w-6xl mx-auto header-card p-6 mb-8 flex flex-wrap justify-between items-center">
         <div class="flex items-center space-x-4">
             <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
-                <i class="fas fa-wave-square text-white text-xl"></i>
+                <i class="fas fa-microchip text-white text-xl"></i>
             </div>
             <div>
                 <h1 class="text-2xl font-bold">Pi Python Club</h1>
@@ -110,119 +108,199 @@
         </div>
         <div class="text-right hidden sm:block">
             <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Project Dashboard</p>
-            <p class="text-green-400 font-mono text-sm">v1.0 Stable</p>
+            <p class="text-green-400 font-mono text-sm">v1.2 Actual Code</p>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Left Column: Primary Visual Reference -->
-        <div class="lg:col-span-7 main-card p-6">
+        <div class="lg:col-span-6 main-card p-6">
             <h2 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-6">Wiring Reference</h2>
             
-            <div id="wiring-viz" class="inner-container p-4 mb-6 aspect-video flex items-center justify-center relative overflow-hidden">
-                <!-- Corrected path and filename for the schematic image -->
-                <img src="ClubPortal/assets/ledcontroller.png" alt="Pico W Wiring Schematic" class="schematic-img" onerror="this.parentElement.innerHTML='<div class=\'text-slate-500 text-xs font-mono\'>Schematic Image (ledcontroller.png) Not Found</div>'">
+            <div id="wiring-viz" class="inner-container p-4 mb-6 aspect-square flex items-center justify-center relative overflow-hidden">
+                <!-- IMPORTANT: Keep as temp.png for this preview, change to your path in production -->
+                <img src="ClubPortal\tutorials\ledcontroller.png" alt="Pico W Wiring Schematic" class="schematic-img" onerror="this.src='https://via.placeholder.com/400x400/1e293b/94a3b8?text=Image+Path+Error'">
             </div>
 
             <div class="grid grid-cols-3 gap-4">
                 <div class="inner-container p-4 flex flex-col items-center justify-center space-y-2">
                     <div class="w-2 h-2 rounded-full bg-red-500 glow-red"></div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">LED (GP15)</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase text-center">GP15 (LED)</span>
                 </div>
                 <div class="inner-container p-4 flex flex-col items-center justify-center space-y-2">
                     <div class="w-2 h-2 rounded-full bg-green-500 glow-green"></div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">WiFi Status</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase text-center">Onboard LED</span>
                 </div>
-                <div class="inner-container p-4 flex flex-col items-center justify-center space-y-2 opacity-50">
-                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Data (N/A)</span>
+                <div class="inner-container p-4 flex flex-col items-center justify-center space-y-2">
+                    <div class="w-2 h-2 rounded-full bg-blue-500 glow-blue"></div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase text-center">WiFi (STA)</span>
                 </div>
             </div>
         </div>
 
         <!-- Right Column: Navigation & Detail -->
-        <div class="lg:col-span-5 flex flex-col space-y-6">
+        <div class="lg:col-span-6 flex flex-col space-y-6">
             
-            <!-- Navigation -->
             <div class="tab-nav flex justify-between">
-                <button onclick="switchTab(this, 'setup')" class="tab-button active flex-1">Setup</button>
-                <button onclick="switchTab(this, 'code')" class="tab-button flex-1">Code</button>
-                <button onclick="switchTab(this, 'explain')" class="tab-button flex-1">Explain</button>
+                <button onclick="switchTab(this, 'code')" class="tab-button active flex-1">Actual Code</button>
+                <button onclick="switchTab(this, 'setup')" class="tab-button flex-1">Setup</button>
+                <button onclick="switchTab(this, 'explain')" class="tab-button flex-1">Logic</button>
             </div>
 
-            <!-- Content Area -->
-            <div class="main-card p-6 flex-1">
+            <div class="main-card p-6 flex-1 overflow-hidden">
                 
-                <!-- Setup Content -->
-                <div id="setup" class="tab-content active-content">
-                    <div class="flex items-center space-x-2 mb-6">
-                        <i class="fas fa-info-circle text-blue-400"></i>
-                        <h3 class="font-bold text-lg">Pin Connections</h3>
+                <!-- Code Content -->
+                <div id="code" class="tab-content active-content">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold">main.py (MicroPython)</h3>
+                        <button onclick="copyCode()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
                     </div>
-                    <div class="inner-container p-6 space-y-2">
-                        <p class="pin-label">PICO GPIO PINS</p>
-                        
-                        <div class="pin-row flex justify-between items-center">
-                            <span class="text-sm">Main Red LED</span>
-                            <span class="bg-slate-800 text-[10px] font-mono px-2 py-1 rounded text-white border border-white/10">GP15</span>
-                        </div>
-                        
-                        <div class="pin-row flex justify-between items-center">
-                            <span class="text-sm">Ground Connection</span>
-                            <span class="bg-slate-800 text-[10px] font-mono px-2 py-1 rounded text-white border border-white/10">GND</span>
-                        </div>
+                    <div class="overflow-hidden">
+                        <pre id="pythonCode" class="code-block text-[11px] h-[450px] overflow-y-auto whitespace-pre">
+import network
+import socket
+import time
+from machine import Pin
 
-                        <div class="pin-row flex justify-between items-center border-none">
-                            <span class="text-sm text-blue-400 font-semibold">Web Server Port</span>
-                            <span class="bg-blue-900/30 text-[10px] font-mono px-2 py-1 rounded text-blue-300 border border-blue-500/30">80</span>
-                        </div>
+# Configuration
+SSID = 'YOUR_WIFI_NAME'
+PASSWORD = 'YOUR_WIFI_PASSWORD'
+
+# Hardware Setup
+# GP15 is connected to the positive leg (anode) of the LED
+led_external = Pin(15, Pin.OUT)
+# The onboard LED on Pico W is accessed via 'LED' string
+led_onboard = Pin('LED', Pin.OUT)
+
+def connect_wifi():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    wlan.connect(SSID, PASSWORD)
+    
+    print('Connecting to WiFi...')
+    # Blink onboard LED while connecting
+    while not wlan.isconnected():
+        led_onboard.toggle()
+        time.sleep(0.5)
+    
+    led_onboard.on()
+    print('Connected! IP:', wlan.ifconfig()[0])
+    return wlan.ifconfig()[0]
+
+def web_page(state):
+    # This generates the HTML served to your browser
+    html = f"""&lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Pico W Control&lt;/title&gt;
+        &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+        &lt;style&gt;
+            body {{ font-family: sans-serif; text-align: center; background: #0f172a; color: white; padding: 20px; }}
+            .btn {{ display: block; width: 100%; max-width: 300px; margin: 20px auto; padding: 20px; 
+                   text-decoration: none; border-radius: 10px; font-weight: bold; color: white; font-size: 1.2em; }}
+            .on {{ background: #ef4444; }}
+            .off {{ background: #334155; }}
+            .status {{ margin-top: 50px; color: #94a3b8; font-size: 0.9em; }}
+        &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;Pi Python Club&lt;/h1&gt;
+        &lt;div style="background: #1e293b; padding: 20px; border-radius: 15px;"&gt;
+            &lt;p&gt;LED is currently: &lt;strong style="color: {'#4ade80' if state == 'ON' else '#94a3b8'}"&gt;{state}&lt;/strong&gt;&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;a href="/on" class="btn on"&gt;TURN LED ON&lt;/a&gt;
+        &lt;a href="/off" class="btn off"&gt;TURN LED OFF&lt;/a&gt;
+        &lt;p class="status"&gt;Raspberry Pi Pico W Web Server&lt;/p&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;"""
+    return html
+
+def serve():
+    ip = connect_wifi()
+    # Prepare the socket
+    addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
+    
+    s = socket.socket()
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.bind(addr)
+    s.listen(1)
+    
+    print('Web Server active on http://' + ip)
+    
+    while True:
+        try:
+            cl, addr = s.accept()
+            # Receive the request (max 1024 bytes)
+            request = cl.recv(1024).decode('utf-8')
+            
+            # Simple URL routing
+            if '/on' in request:
+                led_external.on()
+            elif '/off' in request:
+                led_external.off()
+                
+            # Get current state for the UI
+            state = "ON" if led_external.value() else "OFF"
+            response = web_page(state)
+            
+            # Send HTTP Headers and Content
+            cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
+            cl.send(response)
+            cl.close()
+        except Exception as e:
+            print("Connection error:", e)
+            cl.close()
+
+# Main Execution
+try:
+    serve()
+except KeyboardInterrupt:
+    print("Stopping Server...")
+    led_external.off()
+    led_onboard.off()</pre>
                     </div>
                 </div>
 
-                <!-- Code Content -->
-                <div id="code" class="tab-content">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-bold">main.py</h3>
-                        <button onclick="copyCode()" class="text-xs text-slate-400 hover:text-white">Copy Code</button>
+                <!-- Setup Content -->
+                <div id="setup" class="tab-content">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <i class="fas fa-list-check text-blue-400"></i>
+                        <h3 class="font-bold text-lg">Hardware Setup</h3>
                     </div>
-                    <div class="overflow-hidden">
-                        <pre id="pythonCode" class="code-block text-[11px] h-[300px] overflow-y-auto">
-import network
-import socket
-from machine import Pin
-
-led = Pin(15, Pin.OUT)
-
-def web_page():
-    return """&lt;html&gt;&lt;body&gt;
-    &lt;h1&gt;Pico Control&lt;/h1&gt;
-    &lt;a href="/on"&gt;&lt;button&gt;ON&lt;/button&gt;&lt;/a&gt;
-    &lt;a href="/off"&gt;&lt;button&gt;OFF&lt;/button&gt;&lt;/a&gt;
-    &lt;/body&gt;&lt;/html&gt;"""
-
-# Setup WiFi...
-# (Connect logic here)
-# Start Server...
-                        </pre>
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
+                            <p class="text-sm"><strong>Pico W Pin 20 (GP15):</strong> Connect to LED Long Leg (+).</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
+                            <p class="text-sm"><strong>Resistor (220&Omega;):</strong> Place between LED short leg (-) and GND.</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
+                            <p class="text-sm"><strong>GND Pin:</strong> Connect to common ground rail.</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
+                            <p class="text-sm text-yellow-500 font-bold">Important: Use Thonny IDE to save this as 'main.py' on the Pico W.</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Explain Content -->
                 <div id="explain" class="tab-content">
-                    <h3 class="font-bold mb-4">Logic Flow</h3>
+                    <h3 class="font-bold mb-4">Software Logic</h3>
                     <div class="space-y-4">
-                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
-                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">01. Initialize</p>
-                            <p class="text-sm text-slate-300">Set GPIO 15 as output to drive the LED circuit.</p>
+                        <div class="bg-slate-900/50 p-4 rounded-lg">
+                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">1. WiFi Station (STA)</p>
+                            <p class="text-sm text-slate-300">The Pico acts as a device on your network. It gets an IP address from your router.</p>
                         </div>
-                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
-                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">02. Network</p>
-                            <p class="text-sm text-slate-300">Start the WLAN chip in Station mode and acquire a local IP.</p>
+                        <div class="bg-slate-900/50 p-4 rounded-lg">
+                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">2. The Loop</p>
+                            <p class="text-sm text-slate-300">`s.accept()` waits for a connection. When you visit the IP in your browser, it triggers this loop.</p>
                         </div>
-                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
-                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">03. Socket</p>
-                            <p class="text-sm text-slate-300">Listen for HTTP requests. Parse URL for '/on' or '/off' commands.</p>
+                        <div class="bg-slate-900/50 p-4 rounded-lg">
+                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">3. Request Parsing</p>
+                            <p class="text-sm text-slate-300">We look for `/on` or `/off` strings inside the text sent by your browser to decide what to do with the GPIO pin.</p>
                         </div>
                     </div>
                 </div>
@@ -233,11 +311,8 @@ def web_page():
 
     <script>
         function switchTab(btn, tabId) {
-            // Update buttons
             document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            // Update content
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-content'));
             document.getElementById(tabId).classList.add('active-content');
         }
@@ -250,7 +325,12 @@ def web_page():
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            alert('Code copied to clipboard');
+            // Non-blocking notification
+            const notify = document.createElement('div');
+            notify.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300';
+            notify.innerText = 'MicroPython Code Copied!';
+            document.body.appendChild(notify);
+            setTimeout(() => { notify.style.opacity = '0'; setTimeout(() => notify.remove(), 300); }, 2000);
         }
     </script>
 </body>
