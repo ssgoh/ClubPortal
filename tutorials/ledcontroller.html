@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi Python Club - Pico W LED Tutorial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --card-inner: #0f172a;
+            --accent-blue: #3b82f6;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+        }
+
+        .header-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .inner-container {
+            background: var(--card-inner);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-nav {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 0.75rem;
+            padding: 4px;
+        }
+
+        .tab-button {
+            padding: 8px 24px;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .tab-button.active {
+            background: #334155;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .glow-red { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        .glow-green { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
+        .glow-blue { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+
+        .pin-row {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 0;
+        }
+
+        .pin-label { color: #f87171; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.05em; }
+
+        .code-block {
+            background: #000;
+            color: #4ade80;
+            font-family: 'Fira Code', monospace;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .tab-content { display: none; }
+        .active-content { display: grid; }
+        
+        /* Ensure image fits nicely */
+        .schematic-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Header Section -->
+    <header class="max-w-6xl mx-auto header-card p-6 mb-8 flex flex-wrap justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                <i class="fas fa-wave-square text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold">Pi Python Club</h1>
+                <p class="text-sm text-slate-400">Pico W + WiFi LED Controller</p>
+            </div>
+        </div>
+        <div class="text-right hidden sm:block">
+            <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Project Dashboard</p>
+            <p class="text-green-400 font-mono text-sm">v1.0 Stable</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Primary Visual Reference -->
+        <div class="lg:col-span-7 main-card p-6">
+            <h2 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-6">Wiring Reference</h2>
+            
+            <div id="wiring-viz" class="inner-container p-4 mb-6 aspect-video flex items-center justify-center relative overflow-hidden">
+                <!-- Using assets/temp.png for the schematic view -->
+                <img src="ClubPortal\assets\ledcontroller.png" alt="Pico W Wiring Schematic" class="schematic-img" onerror="this.parentElement.innerHTML='<div class=\'text-slate-500 text-xs font-mono\'>Schematic Image (temp.png) Not Found</div>'">
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+                <div class="inner-container p-4 flex flex-col items-center justify-center space-y-2">
+                    <div class="w-2 h-2 rounded-full bg-red-500 glow-red"></div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">LED (GP15)</span>
+                </div>
+                <div class="inner-container p-4 flex flex-col items-center justify-center space-y-2">
+                    <div class="w-2 h-2 rounded-full bg-green-500 glow-green"></div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">WiFi Status</span>
+                </div>
+                <div class="inner-container p-4 flex flex-col items-center justify-center space-y-2 opacity-50">
+                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Data (N/A)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Navigation & Detail -->
+        <div class="lg:col-span-5 flex flex-col space-y-6">
+            
+            <!-- Navigation -->
+            <div class="tab-nav flex justify-between">
+                <button onclick="switchTab(this, 'setup')" class="tab-button active flex-1">Setup</button>
+                <button onclick="switchTab(this, 'code')" class="tab-button flex-1">Code</button>
+                <button onclick="switchTab(this, 'explain')" class="tab-button flex-1">Explain</button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="main-card p-6 flex-1">
+                
+                <!-- Setup Content -->
+                <div id="setup" class="tab-content active-content">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <i class="fas fa-info-circle text-blue-400"></i>
+                        <h3 class="font-bold text-lg">Pin Connections</h3>
+                    </div>
+                    <div class="inner-container p-6 space-y-2">
+                        <p class="pin-label">PICO GPIO PINS</p>
+                        
+                        <div class="pin-row flex justify-between items-center">
+                            <span class="text-sm">Main Red LED</span>
+                            <span class="bg-slate-800 text-[10px] font-mono px-2 py-1 rounded text-white border border-white/10">GP15</span>
+                        </div>
+                        
+                        <div class="pin-row flex justify-between items-center">
+                            <span class="text-sm">Ground Connection</span>
+                            <span class="bg-slate-800 text-[10px] font-mono px-2 py-1 rounded text-white border border-white/10">GND</span>
+                        </div>
+
+                        <div class="pin-row flex justify-between items-center border-none">
+                            <span class="text-sm text-blue-400 font-semibold">Web Server Port</span>
+                            <span class="bg-blue-900/30 text-[10px] font-mono px-2 py-1 rounded text-blue-300 border border-blue-500/30">80</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Content -->
+                <div id="code" class="tab-content">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold">main.py</h3>
+                        <button onclick="copyCode()" class="text-xs text-slate-400 hover:text-white">Copy Code</button>
+                    </div>
+                    <div class="overflow-hidden">
+                        <pre id="pythonCode" class="code-block text-[11px] h-[300px] overflow-y-auto">
+import network
+import socket
+from machine import Pin
+
+led = Pin(15, Pin.OUT)
+
+def web_page():
+    return """&lt;html&gt;&lt;body&gt;
+    &lt;h1&gt;Pico Control&lt;/h1&gt;
+    &lt;a href="/on"&gt;&lt;button&gt;ON&lt;/button&gt;&lt;/a&gt;
+    &lt;a href="/off"&gt;&lt;button&gt;OFF&lt;/button&gt;&lt;/a&gt;
+    &lt;/body&gt;&lt;/html&gt;"""
+
+# Setup WiFi...
+# (Connect logic here)
+# Start Server...
+                        </pre>
+                    </div>
+                </div>
+
+                <!-- Explain Content -->
+                <div id="explain" class="tab-content">
+                    <h3 class="font-bold mb-4">Logic Flow</h3>
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
+                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">01. Initialize</p>
+                            <p class="text-sm text-slate-300">Set GPIO 15 as output to drive the LED circuit.</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
+                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">02. Network</p>
+                            <p class="text-sm text-slate-300">Start the WLAN chip in Station mode and acquire a local IP.</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
+                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">03. Socket</p>
+                            <p class="text-sm text-slate-300">Listen for HTTP requests. Parse URL for '/on' or '/off' commands.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function switchTab(btn, tabId) {
+            // Update buttons
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-content'));
+            document.getElementById(tabId).classList.add('active-content');
+        }
+
+        function copyCode() {
+            const code = document.getElementById('pythonCode').innerText;
+            const el = document.createElement('textarea');
+            el.value = code;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert('Code copied to clipboard');
+        }
+    </script>
+</body>
+</html>
