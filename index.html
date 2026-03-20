@@ -3,328 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi Python Makers Club | Pico W WiFi Guide</title>
+    <title>Pi Python Makers Club</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0f172a;
-            color: #f1f5f9;
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        .card { 
+            background: rgba(30, 41, 59, 0.5); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 1.5rem; 
+            transition: all 0.3s ease;
         }
-
-        .code-font {
-            font-family: 'Fira Code', monospace;
+        .card:hover { 
+            border-color: #38bdf8; 
+            transform: translateY(-5px); 
+            background: rgba(30, 41, 59, 0.8);
         }
-
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
         .tab-active {
-            color: #38bdf8;
-            border-bottom: 2px solid #38bdf8;
-            background: rgba(56, 189, 248, 0.05);
+            background-color: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
         }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
+        .hidden-item { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen selection:bg-blue-500/30">
+<body class="min-h-screen">
 
-    <!-- Header Section -->
-    <header class="relative py-12 px-4 overflow-hidden">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-10 pointer-events-none">
-            <div class="absolute top-0 left-1/4 w-64 h-64 bg-blue-500 rounded-full blur-[120px]"></div>
-            <div class="absolute bottom-0 right-1/4 w-64 h-64 bg-indigo-500 rounded-full blur-[120px]"></div>
+    <nav class="border-b border-white/10 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 p-5">
+        <div class="max-w-6xl mx-auto flex items-center gap-4">
+            <div class="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center font-bold text-white text-xl">π</div>
+            <h1 class="text-xl font-bold tracking-tight">Pi Python Makers</h1>
         </div>
-        
-        <div class="max-w-4xl mx-auto text-center relative z-10">
-            <!-- Navigation Button -->
-            <div class="mb-8">
-                <!-- Moving from \ClubPortal\tutorial up to \ClubPortal to find index.html -->
-                <a href="../index.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-300 text-sm font-semibold hover:bg-slate-700 hover:text-white transition-all group">
-                    <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    Return to Home Page
-                </a>
-            </div>
+    </nav>
 
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                </span>
-                Pi Python Makers Club
-            </div>
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
-                Getting Your <span class="gradient-text">Pico Online</span>
-            </h1>
-            <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
-                Master the foundations of IoT by connecting your hardware to the web. 
-                Essential for <strong>remote control</strong> and <strong>real-time data monitoring</strong>.
-            </p>
-        </div>
+    <header class="max-w-4xl mx-auto text-center pt-16 pb-8 px-6">
+        <h2 class="text-5xl md:text-6xl font-black mb-6">
+            Build. Code. <span class="text-sky-400">Create.</span>
+        </h2>
+        <p class="text-slate-400 text-lg">A simple hub for our Python projects and tutorials.</p>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 pb-20">
+    <div class="max-w-xl mx-auto px-6 mb-12 space-y-6">
+        <div class="relative group">
+            <input type="text" id="search-input" onkeyup="applyFilters()" placeholder="Search projects or tutorials..." 
+                class="w-full bg-slate-900/50 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:ring-2 focus:ring-sky-500/50 transition-all">
+        </div>
+
+        <div class="flex justify-center">
+            <div class="inline-flex p-1 bg-slate-900/80 rounded-2xl border border-white/10 backdrop-blur-sm">
+                <button onclick="setTab('all')" id="btn-all" class="tab-btn tab-active px-6 py-2 rounded-xl text-sm transition-all">All</button>
+                <button onclick="setTab('project')" id="btn-project" class="tab-btn px-6 py-2 rounded-xl text-sm text-slate-400 hover:text-white transition-all">Projects</button>
+                <button onclick="setTab('tutorial')" id="btn-tutorial" class="tab-btn px-6 py-2 rounded-xl text-sm text-slate-400 hover:text-white transition-all">Tutorials</button>
+            </div>
+        </div>
+    </div>
+
+    <main id="content-grid" class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
         
-        <!-- Objectives Grid -->
-        <div class="grid md:grid-cols-4 gap-4 mb-10">
-            <div class="glass-card p-5 rounded-2xl flex flex-col gap-3">
-                <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                </div>
-                <h4 class="text-sm font-bold text-slate-200">Safe Variables</h4>
-                <p class="text-xs text-slate-400 leading-relaxed">Store credentials securely using modular abstraction.</p>
+        <div class="card p-8 flex flex-col item-card" data-category="project">
+            <div class="flex justify-between items-start mb-4">
+                <div class="text-3xl">🚀</div>
+                <span class="text-[10px] uppercase font-bold tracking-widest bg-sky-500/10 text-sky-400 px-2 py-1 rounded-md">Project</span>
             </div>
-            <div class="glass-card p-5 rounded-2xl flex flex-col gap-3">
-                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                </div>
-                <h4 class="text-sm font-bold text-slate-200">Retry Logic</h4>
-                <p class="text-xs text-slate-400 leading-relaxed">Implement loops to handle network stability and delays.</p>
-            </div>
-            <div class="glass-card p-5 rounded-2xl flex flex-col gap-3">
-                <div class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
-                </div>
-                <h4 class="text-sm font-bold text-slate-200">CYW43439 Chip</h4>
-                <p class="text-xs text-slate-400 leading-relaxed">Interface with the specialized WiFi silicon onboard.</p>
-            </div>
-            <div class="glass-card p-5 rounded-2xl flex flex-col gap-3">
-                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                </div>
-                <h4 class="text-sm font-bold text-slate-200">Status Codes</h4>
-                <p class="text-xs text-slate-400 leading-relaxed">Interpret hardware integers for connection success.</p>
-            </div>
+            <h3 class="text-xl font-bold mb-2">Thingspeak Weather Station</h3>
+            <p class="text-slate-400 text-sm mb-8">Monitor temperature and humidity using Python and ThingSpeak.</p>
+            <a href="projects/thingspeak.html" class="mt-auto block w-full bg-sky-500 hover:bg-sky-400 text-slate-950 text-center py-3 rounded-xl font-bold transition-all">View Project</a>
         </div>
 
-        <!-- Main Interface -->
-        <div class="glass-card rounded-3xl shadow-2xl overflow-hidden border border-slate-700/50">
-            <!-- Navigation -->
-            <div class="flex bg-slate-800/50 border-b border-slate-700 overflow-x-auto no-scrollbar">
-                <button onclick="switchTab('generator')" id="tab-generator" class="px-8 py-5 font-bold text-slate-400 hover:text-white transition-all tab-active whitespace-nowrap">
-                    The Script
-                </button>
-                <button onclick="switchTab('explainer')" id="tab-explainer" class="px-8 py-5 font-bold text-slate-400 hover:text-white transition-all whitespace-nowrap">
-                    Concept Guide
-                </button>
-                <button onclick="switchTab('troubleshoot')" id="tab-troubleshoot" class="px-8 py-5 font-bold text-slate-400 hover:text-white transition-all whitespace-nowrap">
-                    Troubleshooting
-                </button>
+        <div class="card p-8 flex flex-col item-card" data-category="tutorial">
+            <div class="flex justify-between items-start mb-4">
+                <div class="text-3xl">📖</div>
+                <span class="text-[10px] uppercase font-bold tracking-widest bg-slate-700 text-slate-300 px-2 py-1 rounded-md">Tutorial</span>
             </div>
-
-            <!-- Content Area -->
-            <div class="p-6 md:p-10">
-                
-                <!-- Tab: Generator -->
-                <div id="content-generator" class="tab-content">
-                    <div class="grid lg:grid-cols-5 gap-10">
-                        <!-- Instructions -->
-                        <div class="lg:col-span-2 space-y-6">
-                            <div>
-                                <h3 class="text-lg font-bold text-white mb-4">Deployment Steps</h3>
-                                <p class="text-sm text-slate-400 leading-relaxed">
-                                    Load the connection logic onto your Raspberry Pi Pico W.
-                                </p>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <div class="flex gap-4 p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
-                                    <div class="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</div>
-                                    <p class="text-xs text-slate-300 font-medium">Copy the MicroPython script shown on the right.</p>
-                                </div>
-                                <div class="flex gap-4 p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
-                                    <div class="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</div>
-                                    <p class="text-xs text-slate-300 font-medium">Open <strong>Thonny IDE</strong> and paste into <code class="bg-slate-700 px-1 rounded text-blue-300">main.py</code>.</p>
-                                </div>
-                                <div class="flex gap-4 p-4 bg-blue-500/10 rounded-2xl border border-blue-500/20">
-                                    <div class="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</div>
-                                    <p class="text-xs text-slate-200 font-bold">Update <code>ssid</code> and <code>password</code> with your WiFi credentials.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Code View -->
-                        <div class="lg:col-span-3">
-                            <div class="flex justify-between items-center mb-4">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Source Code</span>
-                                </div>
-                                <button onclick="copyCode()" class="group flex items-center gap-2 text-xs font-bold text-blue-400 hover:text-blue-300 transition-all">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                                    Copy Script
-                                </button>
-                            </div>
-                            <div class="relative group">
-                                <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
-                                <pre id="code-display" class="relative code-font bg-slate-950 text-slate-300 p-6 rounded-xl text-[13px] h-[500px] overflow-y-auto leading-relaxed border border-slate-800 shadow-inner"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab: Explainer -->
-                <div id="content-explainer" class="tab-content hidden space-y-10">
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div class="glass-card p-6 rounded-2xl border-l-4 border-blue-500">
-                            <h4 class="text-white font-bold mb-2">Variable Abstraction</h4>
-                            <p class="text-sm text-slate-400 leading-relaxed">Instead of hardcoding details inside functions, variables create a "Configuration Zone". This makes code portable across different networks without risking the logic.</p>
-                        </div>
-                        <div class="glass-card p-6 rounded-2xl border-l-4 border-indigo-500">
-                            <h4 class="text-white font-bold mb-2">The "Status 3" Rule</h4>
-                            <p class="text-sm text-slate-400 leading-relaxed">MicroPython status codes are internal markers. <code>3</code> specifically indicates that IP assignment (DHCP) was successful and the hardware is fully "Station Active".</p>
-                        </div>
-                    </div>
-
-                    <div class="p-8 bg-slate-800/40 rounded-3xl border border-slate-700/50">
-                        <h3 class="text-lg font-bold text-white mb-6">Common Vocabulary</h3>
-                        <div class="grid sm:grid-cols-2 gap-x-12 gap-y-6">
-                            <div class="flex gap-4">
-                                <span class="text-blue-500 font-bold">#</span>
-                                <div>
-                                    <h5 class="text-sm font-bold text-slate-200">SSID</h5>
-                                    <p class="text-xs text-slate-500 mt-1 italic">Service Set Identifier. Your network's name.</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-4">
-                                <span class="text-blue-500 font-bold">#</span>
-                                <div>
-                                    <h5 class="text-sm font-bold text-slate-200">Station Mode</h5>
-                                    <p class="text-xs text-slate-500 mt-1 italic">Client role (connecting to a router).</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-4">
-                                <span class="text-blue-500 font-bold">#</span>
-                                <div>
-                                    <h5 class="text-sm font-bold text-slate-200">Handshake</h5>
-                                    <p class="text-xs text-slate-500 mt-1 italic">The security protocol during connection.</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-4">
-                                <span class="text-blue-500 font-bold">#</span>
-                                <div>
-                                    <h5 class="text-sm font-bold text-slate-200">IP Address</h5>
-                                    <p class="text-xs text-slate-500 mt-1 italic">Your device's digital mailing address.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab: Troubleshoot -->
-                <div id="content-troubleshoot" class="tab-content hidden grid md:grid-cols-3 gap-6">
-                    <div class="glass-card p-6 rounded-2xl border-t-2 border-red-500/50">
-                        <h4 class="text-white font-bold mb-3">2.4GHz Only</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed">The Pico W does <strong>not</strong> support 5GHz bands. Check your router settings for a legacy 2.4GHz broadcast.</p>
-                    </div>
-                    <div class="glass-card p-6 rounded-2xl border-t-2 border-amber-500/50">
-                        <h4 class="text-white font-bold mb-3">Firmware Check</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed">If <code>import network</code> fails, ensure you flashed the <strong>Pico W</strong> specific MicroPython UF2 file.</p>
-                    </div>
-                    <div class="glass-card p-6 rounded-2xl border-t-2 border-blue-500/50">
-                        <h4 class="text-white font-bold mb-3">Signal Block</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed">Metal enclosures or placing fingers on the silver antenna will drop signal strength significantly.</p>
-                    </div>
-                </div>
+            <h3 class="text-xl font-bold mb-2">Thingspeak Registration</h3>
+            <p class="text-slate-400 text-sm mb-8">Guide on how to register and set up your ThingSpeak account.</p>
+            <a href="tutorials/register_thingspeak.html" class="mt-auto block w-full bg-slate-800 hover:bg-slate-700 text-white text-center py-3 rounded-xl font-bold transition-all">View Tutorial</a>
+        </div>
+        <div class="card p-8 flex flex-col item-card" data-category="tutorial">
+            <div class="flex justify-between items-start mb-4">
+                <div class="text-3xl">📖</div>
+                <span class="text-[10px] uppercase font-bold tracking-widest bg-slate-700 text-slate-300 px-2 py-1 rounded-md">Tutorial</span>
             </div>
+            <h3 class="text-xl font-bold mb-2">Setting Up Wifi on the Pico W</h3>
+            <p class="text-slate-400 text-sm mb-8">Guide on how to connect the Pico W to Wifi</p>
+            <a href="tutorials/Setting_Up_Wifi.html" class="mt-auto block w-full bg-slate-800 hover:bg-slate-700 text-white text-center py-3 rounded-xl font-bold transition-all">View Tutorial</a>
         </div>
 
-        <footer class="mt-20 text-center py-10 border-t border-slate-800">
-            <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">
-                Pi Python Makers Club &bull; WiFi Basics Guide
-            </p>
-        </footer>
     </main>
 
     <script>
-        const codeDisplay = document.getElementById('code-display');
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-            document.querySelectorAll('.flex button').forEach(btn => btn.classList.remove('tab-active'));
-            document.getElementById('content-' + tabId).classList.remove('hidden');
-            document.getElementById('tab-' + tabId).classList.add('tab-active');
+        let activeTab = 'all';
+        function setTab(category) {
+            activeTab = category;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-slate-400', 'hover:text-white');
+            });
+            document.getElementById('btn-' + category).classList.add('tab-active');
+            applyFilters();
         }
 
-        function generateCode() {
-            const code = `<span class="text-pink-400">import</span> network
-<span class="text-pink-400">import</span> time
-
-<span class="text-slate-500"># --- 1. SET VARIABLES ---</span>
-ssid = <span class="text-emerald-400">"YOUR_WIFI_NAME"</span>
-password = <span class="text-emerald-400">"YOUR_PASSWORD"</span>
-
-<span class="text-slate-500"># --- 2. INITIALIZE HARDWARE ---</span>
-wlan = network.WLAN(network.STA_IF)
-wlan.active(<span class="text-amber-400">True</span>)
-
-<span class="text-slate-500"># --- 3. BEGIN HANDSHAKE ---</span>
-<span class="text-sky-400">print</span>(<span class="text-emerald-400">"Connecting to:"</span>, ssid)
-wlan.connect(ssid, password)
-
-<span class="text-slate-500"># --- 4. WAIT FOR RESPONSE ---</span>
-max_wait = <span class="text-amber-400">10</span>
-<span class="text-pink-400">while</span> max_wait > <span class="text-amber-400">0</span>:
-    <span class="text-slate-500"># Status Code 3 = Success</span>
-    <span class="text-pink-400">if</span> wlan.status() < <span class="text-amber-400">0</span> <span class="text-pink-400">or</span> wlan.status() >= <span class="text-amber-400">3</span>:
-        <span class="text-pink-400">break</span>
-    max_wait -= <span class="text-amber-400">1</span>
-    <span class="text-sky-400">print</span>(<span class="text-emerald-400">'Waiting for connection...'</span>)
-    time.sleep(<span class="text-amber-400">1</span>)
-
-<span class="text-slate-500"># --- 5. LOG RESULTS ---</span>
-<span class="text-pink-400">if</span> wlan.status() != <span class="text-amber-400">3</span>:
-    <span class="text-sky-400">print</span>(<span class="text-emerald-400">'Connection failed.'</span>)
-<span class="text-pink-400">else</span>:
-    <span class="text-sky-400">print</span>(<span class="text-emerald-400">'Connected!'</span>)
-    status = wlan.ifconfig()
-    <span class="text-sky-400">print</span>(<span class="text-emerald-400">'IP Address:'</span>, status[<span class="text-amber-400">0</span>])`;
-
-            codeDisplay.innerHTML = code;
+        function applyFilters() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            document.querySelectorAll('.item-card').forEach(card => {
+                const cat = card.getAttribute('data-category');
+                const text = card.innerText.toLowerCase();
+                const matchesTab = (activeTab === 'all' || cat === activeTab);
+                const matchesSearch = text.includes(query);
+                card.classList.toggle('hidden-item', !(matchesTab && matchesSearch));
+            });
         }
-
-        function copyCode() {
-            const text = codeDisplay.innerText;
-            const dummy = document.createElement("textarea");
-            document.body.appendChild(dummy);
-            dummy.value = text;
-            dummy.select();
-            document.execCommand("copy");
-            document.body.removeChild(dummy);
-            
-            const btn = event.currentTarget;
-            const original = btn.innerHTML;
-            btn.innerHTML = `<span class="text-green-400">✓ Copied</span>`;
-            setTimeout(() => btn.innerHTML = original, 2000);
-        }
-
-        window.onload = generateCode;
     </script>
 </body>
 </html>
