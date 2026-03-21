@@ -66,13 +66,6 @@
         .glow-green { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
         .glow-blue { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
 
-        .pin-row {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 12px 0;
-        }
-
-        .pin-label { color: #f87171; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.05em; }
-
         .code-block {
             background: #000;
             color: #4ade80;
@@ -92,9 +85,38 @@
             object-fit: contain;
             border-radius: 0.5rem;
         }
+
+        /* Consistent Return Button Style */
+        .btn-return {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(30, 41, 59, 0.5);
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-return:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: white;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
+
+    <!-- Centered Navigation Reference from Image -->
+    <nav class="flex justify-center mb-6">
+        <a href="../index.html" class="btn-return">
+            <i class="fas fa-arrow-left text-[10px]"></i>
+            Return to Home Page
+        </a>
+    </nav>
 
     <header class="max-w-6xl mx-auto header-card p-6 mb-8 flex flex-wrap justify-between items-center">
         <div class="flex items-center space-x-4">
@@ -102,13 +124,13 @@
                 <i class="fas fa-microchip text-white text-xl"></i>
             </div>
             <div>
-                <h1 class="text-2xl font-bold">Pi Python Club</h1>
-                <p class="text-sm text-slate-400">Pico W + WiFi LED Controller</p>
+                <h1 class="text-3xl font-extrabold tracking-tight">Pico W <span class="text-blue-400">Connectivity</span></h1>
+                <p class="text-sm text-slate-400 mt-1">LED Controller Tutorial</p>
             </div>
         </div>
-        <div class="text-right hidden sm:block">
-            <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Project Dashboard</p>
-            <p class="text-green-400 font-mono text-sm">v1.4 Cross-Platform Fix</p>
+        <div class="hidden md:block text-right border-l border-slate-700 pl-6">
+            <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Project Dashboard</p>
+            <p class="text-green-400 font-mono text-sm">v1.6 Theme Sync</p>
         </div>
     </header>
 
@@ -119,7 +141,6 @@
             <h2 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-6">Wiring Reference</h2>
             
             <div id="wiring-viz" class="inner-container p-4 mb-6 aspect-square flex items-center justify-center relative overflow-hidden">
-                <!-- Using local filename. For this preview to work, it falls back to temp.png if local fails -->
                 <img src="ledcontroller.png" alt="Pico W Wiring Schematic" class="schematic-img" onerror="this.src='temp.png'">
             </div>
 
@@ -155,7 +176,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-bold">main.py (MicroPython)</h3>
                         <button onclick="copyCode()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1">
-                            <i class="fas fa-copy"></i> Copy
+                            <i class="fas fa-copy"></i> Copy Script
                         </button>
                     </div>
                     <div class="overflow-hidden">
@@ -199,16 +220,13 @@ def web_page(state):
                    text-decoration: none; border-radius: 10px; font-weight: bold; color: white; font-size: 1.2em; }}
             .on {{ background: #ef4444; }}
             .off {{ background: #334155; }}
-            .status {{ margin-top: 50px; color: #94a3b8; font-size: 0.9em; }}
         &lt;/style&gt;
     &lt;/head&gt;
     &lt;body&gt;
         &lt;h1&gt;Pi Python Club&lt;/h1&gt;
-        &lt;div style="background: #1e293b; padding: 20px; border-radius: 15px;"&gt;
-            &lt;p&gt;LED is currently: &lt;strong style="color: {'#4ade80' if state == 'ON' else '#94a3b8'}"&gt;{state}&lt;/strong&gt;&lt;/p&gt;
-        &lt;/div&gt;
-        &lt;a href="/on" class="btn on"&gt;TURN LED ON&lt;/a&gt;
-        &lt;a href="/off" class="btn off"&gt;TURN LED OFF&lt;/a&gt;
+        &lt;p&gt;LED Status: {state}&lt;/p&gt;
+        &lt;a href="/on" class="btn on"&gt;TURN ON&lt;/a&gt;
+        &lt;a href="/off" class="btn off"&gt;TURN OFF&lt;/a&gt;
     &lt;/body&gt;
     &lt;/html&gt;"""
     return html
@@ -226,17 +244,14 @@ def serve():
         try:
             cl, addr = s.accept()
             request = cl.recv(1024).decode('utf-8')
-            if '/on' in request:
-                led_external.on()
-            elif '/off' in request:
-                led_external.off()
+            if '/on' in request: led_external.on()
+            elif '/off' in request: led_external.off()
             state = "ON" if led_external.value() else "OFF"
             response = web_page(state)
             cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
             cl.send(response)
             cl.close()
-        except Exception as e:
-            cl.close()
+        except: cl.close()
 
 serve()</pre>
                     </div>
@@ -246,20 +261,23 @@ serve()</pre>
                 <div id="setup" class="tab-content">
                     <h3 class="font-bold text-lg mb-4">Hardware Setup</h3>
                     <div class="space-y-4 text-sm">
-                        <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-lg">
-                            <p class="font-bold text-red-400 mb-1"><i class="fas fa-exclamation-triangle"></i> PC View Troubleshooting</p>
-                            <p>If the image is missing on PC, check that <strong>ledcontroller.png</strong> is in the same folder as this HTML file. Browsers are case-sensitive: make sure it isn't "LEDController.png".</p>
+                        <div class="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg flex items-start gap-3">
+                            <i class="fas fa-info-circle text-blue-400 mt-1"></i>
+                            <div>
+                                <p class="font-bold text-blue-400 mb-1">Pin Connections</p>
+                                <p class="text-slate-300">Power LED -> GP15</p>
+                                <p class="text-slate-300">Onboard LED -> Internal</p>
+                            </div>
                         </div>
-                        <p>1. Connect LED long leg to <strong>GP15</strong> (Pin 20) and short leg to <strong>GND</strong> via resistor.</p>
-                        <p>2. Flash the MicroPython code to your Pico W using Thonny.</p>
-                        <p>3. Note the IP address in Thonny and visit it on your phone or PC browser.</p>
+                        <p>1. Connect LED long leg to <strong>GP15</strong> and short leg to <strong>GND</strong> via resistor.</p>
+                        <p>2. Save your MicroPython code as <strong>main.py</strong> on the device.</p>
                     </div>
                 </div>
 
                 <!-- Explain Content -->
                 <div id="explain" class="tab-content">
-                    <h3 class="font-bold mb-4">Software Logic</h3>
-                    <p class="text-sm text-slate-300">The Pico W hosts a small socket server. It listens for HTTP requests and checks the URL path for commands to toggle the GPIO pins.</p>
+                    <h3 class="font-bold mb-4">Logic Breakdown</h3>
+                    <p class="text-sm text-slate-300">The script initializes a WiFi connection in Station mode, creates a socket listener on port 80, and renders a simple HTML string back to the client whenever a request is received.</p>
                 </div>
 
             </div>
@@ -282,7 +300,7 @@ serve()</pre>
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            alert('Code Copied!');
+            alert('Script copied to clipboard!');
         }
     </script>
 </body>
