@@ -108,7 +108,7 @@
         </div>
         <div class="text-right hidden sm:block">
             <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Project Dashboard</p>
-            <p class="text-green-400 font-mono text-sm">v1.2 Actual Code</p>
+            <p class="text-green-400 font-mono text-sm">v1.3 Local Sync</p>
         </div>
     </header>
 
@@ -119,8 +119,8 @@
             <h2 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-6">Wiring Reference</h2>
             
             <div id="wiring-viz" class="inner-container p-4 mb-6 aspect-square flex items-center justify-center relative overflow-hidden">
-                <!-- IMPORTANT: Keep as temp.png for this preview, change to your path in production -->
-                <img src="ledcontroller.png" alt="Pico W Wiring Schematic" class="schematic-img" onerror="this.src='https://via.placeholder.com/400x400/1e293b/94a3b8?text=Image+Path+Error'">
+                <!-- Changed to ledcontroller.png for your local folder setup -->
+                <img src="ledcontroller.png" alt="Pico W Wiring Schematic" class="schematic-img" onerror="this.src='https://via.placeholder.com/400x400/1e293b/94a3b8?text=Image+Not+Found+Locally'">
             </div>
 
             <div class="grid grid-cols-3 gap-4">
@@ -170,9 +170,7 @@ SSID = 'YOUR_WIFI_NAME'
 PASSWORD = 'YOUR_WIFI_PASSWORD'
 
 # Hardware Setup
-# GP15 is connected to the positive leg (anode) of the LED
 led_external = Pin(15, Pin.OUT)
-# The onboard LED on Pico W is accessed via 'LED' string
 led_onboard = Pin('LED', Pin.OUT)
 
 def connect_wifi():
@@ -181,7 +179,6 @@ def connect_wifi():
     wlan.connect(SSID, PASSWORD)
     
     print('Connecting to WiFi...')
-    # Blink onboard LED while connecting
     while not wlan.isconnected():
         led_onboard.toggle()
         time.sleep(0.5)
@@ -191,7 +188,6 @@ def connect_wifi():
     return wlan.ifconfig()[0]
 
 def web_page(state):
-    # This generates the HTML served to your browser
     html = f"""&lt;!DOCTYPE html&gt;
     &lt;html&gt;
     &lt;head&gt;
@@ -213,96 +209,53 @@ def web_page(state):
         &lt;/div&gt;
         &lt;a href="/on" class="btn on"&gt;TURN LED ON&lt;/a&gt;
         &lt;a href="/off" class="btn off"&gt;TURN LED OFF&lt;/a&gt;
-        &lt;p class="status"&gt;Raspberry Pi Pico W Web Server&lt;/p&gt;
     &lt;/body&gt;
     &lt;/html&gt;"""
     return html
 
 def serve():
     ip = connect_wifi()
-    # Prepare the socket
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
-    
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(addr)
     s.listen(1)
-    
     print('Web Server active on http://' + ip)
     
     while True:
         try:
             cl, addr = s.accept()
-            # Receive the request (max 1024 bytes)
             request = cl.recv(1024).decode('utf-8')
-            
-            # Simple URL routing
             if '/on' in request:
                 led_external.on()
             elif '/off' in request:
                 led_external.off()
-                
-            # Get current state for the UI
             state = "ON" if led_external.value() else "OFF"
             response = web_page(state)
-            
-            # Send HTTP Headers and Content
             cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
             cl.send(response)
             cl.close()
         except Exception as e:
-            print("Connection error:", e)
             cl.close()
 
-# Main Execution
-try:
-    serve()
-except KeyboardInterrupt:
-    print("Stopping Server...")
-    led_external.off()
-    led_onboard.off()</pre>
+serve()</pre>
                     </div>
                 </div>
 
                 <!-- Setup Content -->
                 <div id="setup" class="tab-content">
-                    <div class="flex items-center space-x-2 mb-6">
-                        <i class="fas fa-list-check text-blue-400"></i>
-                        <h3 class="font-bold text-lg">Hardware Setup</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
-                            <p class="text-sm"><strong>Pico W Pin 20 (GP15):</strong> Connect to LED Long Leg (+).</p>
-                        </div>
-                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
-                            <p class="text-sm"><strong>Resistor (220&Omega;):</strong> Place between LED short leg (-) and GND.</p>
-                        </div>
-                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
-                            <p class="text-sm"><strong>GND Pin:</strong> Connect to common ground rail.</p>
-                        </div>
-                        <div class="bg-slate-900/50 p-4 rounded-lg border border-white/5">
-                            <p class="text-sm text-yellow-500 font-bold">Important: Use Thonny IDE to save this as 'main.py' on the Pico W.</p>
-                        </div>
+                    <h3 class="font-bold text-lg mb-4">Hardware Setup</h3>
+                    <div class="space-y-4 text-sm">
+                        <p>1. Ensure <strong>ledcontroller.png</strong> is in the same folder as this HTML file.</p>
+                        <p>2. Connect LED long leg to <strong>GP15</strong> and short leg to <strong>GND</strong> via resistor.</p>
+                        <p>3. Flash the MicroPython code to your Pico W using Thonny.</p>
                     </div>
                 </div>
 
                 <!-- Explain Content -->
                 <div id="explain" class="tab-content">
                     <h3 class="font-bold mb-4">Software Logic</h3>
-                    <div class="space-y-4">
-                        <div class="bg-slate-900/50 p-4 rounded-lg">
-                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">1. WiFi Station (STA)</p>
-                            <p class="text-sm text-slate-300">The Pico acts as a device on your network. It gets an IP address from your router.</p>
-                        </div>
-                        <div class="bg-slate-900/50 p-4 rounded-lg">
-                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">2. The Loop</p>
-                            <p class="text-sm text-slate-300">`s.accept()` waits for a connection. When you visit the IP in your browser, it triggers this loop.</p>
-                        </div>
-                        <div class="bg-slate-900/50 p-4 rounded-lg">
-                            <p class="text-xs text-blue-400 font-bold mb-1 uppercase">3. Request Parsing</p>
-                            <p class="text-sm text-slate-300">We look for `/on` or `/off` strings inside the text sent by your browser to decide what to do with the GPIO pin.</p>
-                        </div>
-                    </div>
+                    <p class="text-sm text-slate-300">The Pico W hosts a small socket server. It listens for HTTP requests and checks the URL path for commands to toggle the GPIO pins.</p>
                 </div>
 
             </div>
@@ -325,12 +278,7 @@ except KeyboardInterrupt:
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            // Non-blocking notification
-            const notify = document.createElement('div');
-            notify.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300';
-            notify.innerText = 'MicroPython Code Copied!';
-            document.body.appendChild(notify);
-            setTimeout(() => { notify.style.opacity = '0'; setTimeout(() => notify.remove(), 300); }, 2000);
+            alert('Code Copied!');
         }
     </script>
 </body>
