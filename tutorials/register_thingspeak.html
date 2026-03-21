@@ -118,41 +118,13 @@
             background-color: #1971c2;
             color: white;
         }
-        .tutorial-box {
-            background: #fff;
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-        .google-maps-sim, .thingspeak-sim {
+        .thingspeak-sim {
             background: #f1f3f4;
             border-radius: 8px;
             padding: 20px;
             position: relative;
             overflow: hidden;
             border: 1px solid #dadce0;
-        }
-        .map-context-menu {
-            background: white;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            width: 180px;
-            font-size: 0.85rem;
-            position: absolute;
-            top: 40px;
-            left: 60px;
-            z-index: 10;
-        }
-        .map-context-item {
-            padding: 8px 12px;
-            border-bottom: 1px solid #f1f3f4;
-            color: #3c4043;
-        }
-        .map-context-item.highlight {
-            background: #e8f0fe;
-            font-weight: bold;
-            color: #1967d2;
         }
         .sidebar {
             position: sticky;
@@ -173,14 +145,6 @@
             padding: 10px;
             background: #fff;
             font-size: 0.9rem;
-        }
-        .code-snippet {
-            background: #1e293b;
-            color: #f8f8f2;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-family: 'Courier New', Courier, monospace;
         }
         .key-box {
             background: white;
@@ -208,7 +172,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="index.html" onclick="goHome(event)">
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="index.html">
                 <i data-lucide="waves" class="me-2"></i>
                 Pi Python Club
             </a>
@@ -229,7 +193,8 @@
     <!-- Hero Section -->
     <header class="hero-section">
         <div class="container text-center">
-            <a href="index.html" class="btn-return-home" onclick="goHome(event)">
+            <!-- Explicit relative link back to home index -->
+            <a href="index.html" class="btn-return-home">
                 <i data-lucide="arrow-left" class="me-2" style="width:18px;"></i>
                 Return to Home Page
             </a>
@@ -398,18 +363,19 @@
     <script>
         lucide.createIcons();
         
-        // Navigation helper
-        function goHome(e) {
-            // In many preview environments, navigating directly to a file name 
-            // causes a 404. We keep this JS as a safeguard to ensure the button 
-            // at least scrolls to top and cleans the URL state.
-            try {
-                window.scrollTo({top: 0, behavior: 'smooth'});
-                history.pushState("", document.title, window.location.pathname + window.location.search);
-            } catch (err) {
-                // If it fails, let the default link behavior take over
-            }
-        }
+        // Manual override for preview environment logic
+        // If index.html is the current file, this prevents a page reload 
+        // and just scrolls to top smoothly.
+        document.querySelectorAll('a[href="index.html"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+                if (currentFile === 'index.html') {
+                    e.preventDefault();
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    history.pushState("", document.title, window.location.pathname);
+                }
+            });
+        });
 
         function copyValue(val) {
             const el = document.createElement('textarea');
@@ -418,7 +384,7 @@
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            const badge = event.target;
+            const badge = event.currentTarget;
             const originalText = badge.innerText;
             badge.innerText = "COPIED!";
             setTimeout(() => { badge.innerText = originalText; }, 1000);
