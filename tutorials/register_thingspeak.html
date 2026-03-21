@@ -34,8 +34,8 @@
             clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
             position: relative;
         }
-        /* Custom Return Button from reference image */
-        .btn-return-home {
+        /* Matching the style and class from ledcontroller.html */
+        .btn-return {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
@@ -47,9 +47,8 @@
             font-size: 0.9rem;
             transition: all 0.3s ease;
             margin-bottom: 30px;
-            cursor: pointer;
         }
-        .btn-return-home:hover {
+        .btn-return:hover {
             background: rgba(255, 255, 255, 0.1);
             border-color: rgba(255, 255, 255, 0.4);
             color: white;
@@ -60,7 +59,7 @@
             letter-spacing: -1px;
         }
         .hero-title span {
-            color: #38bdf8; /* Light blue accent from image */
+            color: #38bdf8;
         }
         .intro-card {
             background: white;
@@ -172,8 +171,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
-            <!-- Using the goHome logic for branding -->
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="#" onclick="goHome(event)">
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="../index.html">
                 <i data-lucide="waves" class="me-2"></i>
                 Pi Python Club
             </a>
@@ -194,8 +192,8 @@
     <!-- Hero Section -->
     <header class="hero-section">
         <div class="container text-center">
-            <!-- Same onclick pattern as ledcontroller.html -->
-            <a href="#" class="btn-return-home" onclick="goHome(event)">
+            <!-- Exact tag and class as requested from ledcontroller.html -->
+            <a href="../index.html" class="btn-return">
                 <i data-lucide="arrow-left" class="me-2" style="width:18px;"></i>
                 Return to Home Page
             </a>
@@ -205,7 +203,6 @@
     </header>
 
     <div class="container pb-5">
-        <!-- Intro Section -->
         <div class="row justify-content-center mb-5">
             <div class="col-lg-10">
                 <div class="card intro-card p-4 p-md-5">
@@ -214,9 +211,6 @@
                             <h2 class="fw-bold mb-3">Why Thingspeak?</h2>
                             <p class="lead text-muted mb-4">
                                 In order to visualise the data from our sensor on the internet, we use a cloud service like <strong>ThingSpeak</strong>. 
-                            </p>
-                            <p class="text-secondary">
-                                This portal will guide you through these 4 activities:
                             </p>
                             <div class="row g-2 mb-4">
                                 <div class="col-6"><span class="activity-dot"></span>1. Join the service</div>
@@ -235,7 +229,6 @@
         </div>
 
         <div class="row">
-            <!-- Sidebar -->
             <div class="col-lg-3 d-none d-lg-block">
                 <div class="sidebar">
                     <div class="card p-3 border-0 shadow-sm rounded-4 text-center mb-3">
@@ -254,9 +247,7 @@
                 </div>
             </div>
 
-            <!-- Content Area -->
             <div class="col-lg-9">
-                <!-- Section 1: Account -->
                 <section id="account" class="mb-5 pt-2">
                     <div class="step-card overflow-hidden">
                         <div class="step-header d-flex align-items-center">
@@ -266,11 +257,11 @@
                         <div class="p-4">
                             <p class="text-muted">To use ThingSpeak, you first have to join the service by creating a free account.</p>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex align-items-start">
+                                <li class="list-group-item d-flex align-items-start border-0">
                                     <i data-lucide="arrow-right" class="text-primary me-2 mt-1"></i>
                                     <span>Visit <a href="https://thingspeak.com" target="_blank" class="fw-bold">ThingSpeak.com</a> and click <strong>"Sign Up"</strong>.</span>
                                 </li>
-                                <li class="list-group-item d-flex align-items-start">
+                                <li class="list-group-item d-flex align-items-start border-0">
                                     <i data-lucide="mail" class="text-success me-2 mt-1"></i>
                                     <span><strong>Verification:</strong> You must click the link in your email to activate the account.</span>
                                 </li>
@@ -279,7 +270,6 @@
                     </div>
                 </section>
 
-                <!-- Section 2: Channel -->
                 <section id="channel" class="mb-5 pt-2">
                     <div class="step-card overflow-hidden">
                         <div class="step-header d-flex align-items-center">
@@ -290,9 +280,9 @@
                             <p class="text-muted">Create a Channel in the service to receive our data from the sensor.</p>
                             <div class="mock-ui mb-3">
                                 <div class="fw-bold mb-2">New Channel Settings</div>
-                                <div class="mb-1"><small>Name:</small> Library Monitor</div>
-                                <div class="mb-1"><small>Field 1:</small> Temperature</div>
-                                <div class="mb-1"><small>Field 2:</small> Humidity</div>
+                                <div class="mb-1 text-secondary"><small>Name:</small> Library Monitor</div>
+                                <div class="mb-1 text-secondary"><small>Field 1:</small> Temperature</div>
+                                <div class="mb-1 text-secondary"><small>Field 2:</small> Humidity</div>
                             </div>
                             <ol>
                                 <li>Click <strong>Channels > My Channels > New Channel</strong>.</li>
@@ -303,7 +293,6 @@
                     </div>
                 </section>
 
-                <!-- Section 3: API Keys -->
                 <section id="api" class="mb-5 pt-2">
                     <div class="step-card overflow-hidden border border-success border-2">
                         <div class="step-header d-flex align-items-center bg-success text-white">
@@ -313,7 +302,7 @@
                         <div class="p-4">
                             <p class="text-muted">Use the unique <strong>API Key</strong> assigned to your project by ThingSpeak.</p>
                             <div class="thingspeak-sim p-3">
-                                <div class="bg-white p-3 border rounded shadow-sm">
+                                <div class="bg-white p-3 border rounded shadow-sm text-center">
                                     <div class="text-muted small mb-1">Write API Key</div>
                                     <div class="key-box w-100 mb-2">5Q0JY180IP1076ES</div>
                                     <hr>
@@ -324,7 +313,6 @@
                     </div>
                 </section>
 
-                <!-- Section 4: Localization -->
                 <section id="location" class="mb-5 pt-2">
                     <div class="step-card overflow-hidden border border-primary border-2">
                         <div class="step-header d-flex align-items-center bg-primary text-white">
@@ -364,22 +352,6 @@
     <script>
         lucide.createIcons();
         
-        // This is the specific logic used in ledcontroller.html
-        // It uses window.parent.postMessage to communicate with the host site
-        function goHome(event) {
-            if (event) event.preventDefault();
-            
-            // First, try a smooth scroll up for UX
-            window.scrollTo({top: 0, behavior: 'smooth'});
-
-            // This is the key logic from your ledcontroller.html for navigation within the club site
-            try {
-                window.parent.postMessage({ action: 'navigate', path: 'index.html' }, '*');
-            } catch (e) {
-                console.log("Navigation message sent");
-            }
-        }
-
         function copyValue(val) {
             const el = document.createElement('textarea');
             el.value = val;
