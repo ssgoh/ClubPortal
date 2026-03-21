@@ -6,7 +6,7 @@
     <title>Club IoT Portal | ThingSpeak Setup</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome (Matching ledcontroller.html) -->
+    <!-- Font Awesome (Exact match for ledcontroller.html) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -23,26 +23,24 @@
             scroll-behavior: smooth;
             color: #333;
         }
-        .navbar {
-            background-color: var(--ts-blue);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        }
-        /* Refined Hero Section matching the image style */
+        
+        /* Utility Classes for centered navigation from ledcontroller.html */
+        .flex { display: flex; }
+        .justify-center { justify-content: center; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .text-\[10px\] { font-size: 10px; }
+
+        /* Hero Section */
         .hero-section {
             background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
             color: white;
-            padding: 80px 0 120px 0;
+            padding: 60px 0 100px 0;
             margin-bottom: 0px;
             clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
             position: relative;
         }
-        /* Custom Centered Navigation Reference */
-        .flex.justify-center.mb-6 {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-        /* Matching the style and class from ledcontroller.html */
+        
+        /* Matching the btn-return style and class from ledcontroller.html */
         .btn-return {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -60,14 +58,17 @@
             border-color: rgba(255, 255, 255, 0.4);
             color: white;
         }
+
         .hero-title {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 800;
             letter-spacing: -1px;
         }
         .hero-title span {
             color: #38bdf8;
         }
+
+        /* Content Styles */
         .intro-card {
             background: white;
             border-radius: 20px;
@@ -80,14 +81,9 @@
         .step-card {
             border: none;
             border-radius: 16px;
-            transition: all 0.3s ease;
             background: white;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             margin-bottom: 30px;
-        }
-        .step-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
         .step-header {
             background: #f8f9fa;
@@ -105,52 +101,17 @@
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(29, 112, 184, 0.3);
         }
         .coord-badge {
             background-color: #e7f5ff;
             color: #1971c2;
             padding: 8px 15px;
             border-radius: 8px;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: monospace;
             font-weight: bold;
             cursor: pointer;
             border: 1px dashed #1971c2;
             display: inline-block;
-            transition: all 0.2s;
-        }
-        .coord-badge:hover {
-            background-color: #1971c2;
-            color: white;
-        }
-        .thingspeak-sim {
-            background: #f1f3f4;
-            border-radius: 8px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #dadce0;
-        }
-        .sidebar {
-            position: sticky;
-            top: 100px;
-        }
-        .nav-pills .nav-link {
-            border-radius: 10px;
-            margin-bottom: 5px;
-            color: #495057;
-            font-weight: 500;
-        }
-        .nav-pills .nav-link.active {
-            background-color: var(--ts-blue);
-        }
-        .mock-ui {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 10px;
-            background: #fff;
-            font-size: 0.9rem;
         }
         .key-box {
             background: white;
@@ -158,10 +119,9 @@
             padding: 10px;
             font-family: monospace;
             font-size: 1.1rem;
-            letter-spacing: 1px;
             color: #333;
             display: inline-block;
-            margin-bottom: 10px;
+            width: 100%;
         }
         .activity-dot {
             width: 8px;
@@ -175,39 +135,20 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="../index.html">
-                <i data-lucide="waves" class="me-2"></i>
-                Pi Python Club
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link text-white" href="#account">1. Join</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#channel">2. Channel</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#api">3. Connect</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#location">4. Locate</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <!-- Hero Section -->
     <header class="hero-section">
         <div class="container text-center">
-            <!-- Centered Navigation Reference from Image (Aligned with ledcontroller.html) -->
+            
+            <!-- Centered Navigation Reference: Copy-pasted from ledcontroller.html -->
             <nav class="flex justify-center mb-6">
                 <a href="../index.html" class="btn-return">
                     <i class="fas fa-arrow-left text-[10px] me-2"></i>
                     Return to Home Page
                 </a>
             </nav>
+
             <h1 class="hero-title">ThingSpeak <span>Connectivity</span></h1>
-            <p class="lead opacity-75 mt-3">How to Register for a Thingspeak Account.</p>
+            <p class="lead opacity-75 mt-3">Follow the steps below to setup your cloud data vault.</p>
         </div>
     </header>
 
@@ -217,131 +158,84 @@
                 <div class="card intro-card p-4 p-md-5">
                     <div class="row align-items-center">
                         <div class="col-md-7">
-                            <h2 class="fw-bold mb-3">Why Thingspeak?</h2>
+                            <h2 class="fw-bold mb-3">Cloud Registration</h2>
                             <p class="lead text-muted mb-4">
-                                In order to visualise the data from our sensor on the internet, we use a cloud service like <strong>ThingSpeak</strong>. 
+                                To visualise sensor data online, we use <strong>ThingSpeak</strong>. This guide walks you through the account setup process.
                             </p>
                             <div class="row g-2 mb-4">
-                                <div class="col-6"><span class="activity-dot"></span>1. Join the service</div>
+                                <div class="col-6"><span class="activity-dot"></span>1. Join Service</div>
                                 <div class="col-6"><span class="activity-dot"></span>2. Create Channel</div>
                                 <div class="col-6"><span class="activity-dot"></span>3. Get API Key</div>
                                 <div class="col-6"><span class="activity-dot"></span>4. Map Location</div>
                             </div>
-                            <a href="#account" class="btn btn-primary btn-lg rounded-pill px-4">Start Activity 1</a>
                         </div>
                         <div class="col-md-5 d-none d-md-block text-center">
-                            <i data-lucide="cloud-lightning" class="text-primary opacity-25" style="width: 150px; height: 150px;"></i>
+                            <i data-lucide="cloud-lightning" class="text-primary opacity-25" style="width: 120px; height: 120px;"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-3 d-none d-lg-block">
-                <div class="sidebar">
-                    <div class="card p-3 border-0 shadow-sm rounded-4 text-center mb-3">
-                        <i data-lucide="map-pin" class="text-danger mx-auto mb-2" style="width: 40px; height: 40px;"></i>
-                        <h6 class="fw-bold">Current Project</h6>
-                        <p class="small text-muted">Tampines Regional Library Monitoring</p>
-                    </div>
-                    <div class="card p-3 border-0 shadow-sm rounded-4">
-                        <nav class="nav flex-column nav-pills">
-                            <a class="nav-link" href="#account">1. Create Account</a>
-                            <a class="nav-link" href="#channel">2. New Channel</a>
-                            <a class="nav-link" href="#api">3. API Keys</a>
-                            <a class="nav-link" href="#location">4. Pin the Map</a>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-
+        <div class="row justify-content-center">
             <div class="col-lg-9">
-                <section id="account" class="mb-5 pt-2">
+                <!-- Step 1 -->
+                <section class="mb-5">
                     <div class="step-card overflow-hidden">
                         <div class="step-header d-flex align-items-center">
                             <span class="step-number me-3">1</span>
-                            <h3 class="mb-0">Step 1: Your Digital Passport</h3>
+                            <h3 class="mb-0">Create Your Account</h3>
                         </div>
                         <div class="p-4">
-                            <p class="text-muted">To use ThingSpeak, you first have to join the service by creating a free account.</p>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex align-items-start border-0">
-                                    <i data-lucide="arrow-right" class="text-primary me-2 mt-1"></i>
-                                    <span>Visit <a href="https://thingspeak.com" target="_blank" class="fw-bold">ThingSpeak.com</a> and click <strong>"Sign Up"</strong>.</span>
-                                </li>
-                                <li class="list-group-item d-flex align-items-start border-0">
-                                    <i data-lucide="mail" class="text-success me-2 mt-1"></i>
-                                    <span><strong>Verification:</strong> You must click the link in your email to activate the account.</span>
-                                </li>
-                            </ul>
+                            <p class="text-muted">Visit <a href="https://thingspeak.com" target="_blank" class="fw-bold">ThingSpeak.com</a> and click <strong>"Sign Up"</strong>. You must verify your email to continue.</p>
                         </div>
                     </div>
                 </section>
 
-                <section id="channel" class="mb-5 pt-2">
+                <!-- Step 2 -->
+                <section class="mb-5">
                     <div class="step-card overflow-hidden">
                         <div class="step-header d-flex align-items-center">
                             <span class="step-number me-3">2</span>
-                            <h3 class="mb-0">Step 2: Create a Data "Vault"</h3>
+                            <h3 class="mb-0">The Data "Vault" (Channel)</h3>
                         </div>
                         <div class="p-4">
-                            <p class="text-muted">Create a Channel in the service to receive our data from the sensor.</p>
-                            <div class="mock-ui mb-3">
-                                <div class="fw-bold mb-2">New Channel Settings</div>
-                                <div class="mb-1 text-secondary"><small>Name:</small> Library Monitor</div>
-                                <div class="mb-1 text-secondary"><small>Field 1:</small> Temperature</div>
-                                <div class="mb-1 text-secondary"><small>Field 2:</small> Humidity</div>
-                            </div>
-                            <ol>
-                                <li>Click <strong>Channels > My Channels > New Channel</strong>.</li>
-                                <li>Give it a Name and enable <strong>Field 1</strong> and <strong>Field 2</strong>.</li>
-                                <li>Click <strong>Save Channel</strong> at the bottom.</li>
-                            </ol>
+                            <p class="text-muted">Navigate to <strong>Channels > My Channels > New Channel</strong>. Set the name to "Library Monitor" and enable <strong>Field 1</strong> for Temperature.</p>
                         </div>
                     </div>
                 </section>
 
-                <section id="api" class="mb-5 pt-2">
+                <!-- Step 3 -->
+                <section class="mb-5">
                     <div class="step-card overflow-hidden border border-success border-2">
                         <div class="step-header d-flex align-items-center bg-success text-white">
                             <span class="step-number me-3 bg-white text-success">3</span>
-                            <h3 class="mb-0">Step 3: The Secret Key (API Key)</h3>
+                            <h3 class="mb-0">Your Secret Write API Key</h3>
                         </div>
-                        <div class="p-4">
-                            <p class="text-muted">Use the unique <strong>API Key</strong> assigned to your project by ThingSpeak.</p>
-                            <div class="thingspeak-sim p-3">
-                                <div class="bg-white p-3 border rounded shadow-sm text-center">
-                                    <div class="text-muted small mb-1">Write API Key</div>
-                                    <div class="key-box w-100 mb-2">5Q0JY180IP1076ES</div>
-                                    <hr>
-                                    <div class="small text-muted">Copy this key into your <code>wificonfig.py</code> file.</div>
-                                </div>
-                            </div>
+                        <div class="p-4 text-center">
+                            <p class="text-muted text-start">Find your key under the <strong>API Keys</strong> tab. Copy this into <code>wificonfig.py</code>.</p>
+                            <div class="key-box">5Q0JY180IP1076ES</div>
                         </div>
                     </div>
                 </section>
 
-                <section id="location" class="mb-5 pt-2">
+                <!-- Step 4 -->
+                <section class="mb-5">
                     <div class="step-card overflow-hidden border border-primary border-2">
                         <div class="step-header d-flex align-items-center bg-primary text-white">
                             <span class="step-number me-3 bg-white text-primary">4</span>
-                            <h3 class="mb-0">Step 4: Pin the Location</h3>
+                            <h3 class="mb-0">Location Coordinates</h3>
                         </div>
-                        <div class="p-4">
-                            <h5 class="fw-bold mb-3">Make known the location of our sensor</h5>
-                            <p class="text-muted">Tell ThingSpeak where the sensor is physically located.</p>
-                            <div class="mt-4 p-3 bg-light rounded-4">
-                                <h6 class="fw-bold text-center mb-3">Tampines Library Coordinates</h6>
-                                <div class="row text-center">
-                                    <div class="col-6 border-end">
-                                        <div class="text-muted small text-uppercase">Latitude</div>
-                                        <div class="coord-badge mt-1" onclick="copyValue('1.3522')">1.3522</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="text-muted small text-uppercase">Longitude</div>
-                                        <div class="coord-badge mt-1" onclick="copyValue('103.9412')">103.9412</div>
-                                    </div>
+                        <div class="p-4 text-center">
+                            <p class="text-muted text-start">Enter these coordinates in your Channel settings to show the sensor on the map.</p>
+                            <div class="row">
+                                <div class="col-6">
+                                    <small class="d-block text-muted">Latitude</small>
+                                    <div class="coord-badge" onclick="copyValue('1.3522')">1.3522</div>
+                                </div>
+                                <div class="col-6">
+                                    <small class="d-block text-muted">Longitude</small>
+                                    <div class="coord-badge" onclick="copyValue('103.9412')">103.9412</div>
                                 </div>
                             </div>
                         </div>
@@ -351,16 +245,13 @@
         </div>
     </div>
 
-    <footer class="bg-dark text-white py-5">
-        <div class="container text-center">
-            <p class="small opacity-50">Community Tech Challenge: Library Sensor Project</p>
-        </div>
+    <footer class="bg-dark text-white py-4 text-center">
+        <p class="small opacity-50 mb-0">Pi Python Club | Community Tech Challenge</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         lucide.createIcons();
-        
         function copyValue(val) {
             const el = document.createElement('textarea');
             el.value = val;
@@ -369,9 +260,9 @@
             document.execCommand('copy');
             document.body.removeChild(el);
             const badge = event.currentTarget;
-            const originalText = badge.innerText;
-            badge.innerText = "COPIED!";
-            setTimeout(() => { badge.innerText = originalText; }, 1000);
+            const oldText = badge.innerText;
+            badge.innerText = "Copied!";
+            setTimeout(() => { badge.innerText = oldText; }, 1000);
         }
     </script>
 </body>
