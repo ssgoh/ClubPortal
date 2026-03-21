@@ -172,7 +172,8 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="index.html">
+            <!-- Used javascript:void(0) to prevent 404 navigation errors -->
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="javascript:void(0)" onclick="goHome()">
                 <i data-lucide="waves" class="me-2"></i>
                 Pi Python Club
             </a>
@@ -193,8 +194,8 @@
     <!-- Hero Section -->
     <header class="hero-section">
         <div class="container text-center">
-            <!-- Explicit relative link back to home index -->
-            <a href="index.html" class="btn-return-home">
+            <!-- Changed href to javascript:void(0) to avoid 404 in preview -->
+            <a href="javascript:void(0)" class="btn-return-home" onclick="goHome()">
                 <i data-lucide="arrow-left" class="me-2" style="width:18px;"></i>
                 Return to Home Page
             </a>
@@ -363,19 +364,12 @@
     <script>
         lucide.createIcons();
         
-        // Manual override for preview environment logic
-        // If index.html is the current file, this prevents a page reload 
-        // and just scrolls to top smoothly.
-        document.querySelectorAll('a[href="index.html"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const currentFile = window.location.pathname.split('/').pop() || 'index.html';
-                if (currentFile === 'index.html') {
-                    e.preventDefault();
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                    history.pushState("", document.title, window.location.pathname);
-                }
-            });
-        });
+        // Simplified Home Navigation for Preview Environment
+        function goHome() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            // Remove the hash from the URL without triggering a reload
+            history.pushState("", document.title, window.location.pathname);
+        }
 
         function copyValue(val) {
             const el = document.createElement('textarea');
