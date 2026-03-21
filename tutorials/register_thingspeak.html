@@ -13,6 +13,7 @@
             --ts-blue: #1d70b8;
             --ts-green: #28a745;
             --ts-light-bg: #f4f7f9;
+            --dark-navy: #0f172a;
         }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -24,18 +25,47 @@
             background-color: var(--ts-blue);
             box-shadow: 0 2px 10px rgba(0,0,0,0.15);
         }
+        /* Refined Hero Section matching the image style */
         .hero-section {
-            background: linear-gradient(135deg, #1d70b8 0%, #004a99 100%);
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
             color: white;
-            padding: 80px 0;
+            padding: 100px 0 120px 0;
             margin-bottom: 0px;
             clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+            position: relative;
+        }
+        /* Custom Return Button from reference image */
+        .btn-return-home {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 8px;
+            padding: 8px 20px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+        .btn-return-home:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        .hero-title span {
+            color: #38bdf8; /* Light blue accent from image */
         }
         .intro-card {
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            margin-top: -50px;
+            margin-top: -60px;
             position: relative;
             z-index: 10;
             border: none;
@@ -71,7 +101,7 @@
             font-size: 1.2rem;
             box-shadow: 0 4px 10px rgba(29, 112, 184, 0.3);
         }
-        .coord-badge, .key-badge {
+        .coord-badge {
             background-color: #e7f5ff;
             color: #1971c2;
             padding: 8px 15px;
@@ -83,7 +113,7 @@
             display: inline-block;
             transition: all 0.2s;
         }
-        .coord-badge:hover, .key-badge:hover {
+        .coord-badge:hover {
             background-color: #1971c2;
             color: white;
         }
@@ -144,7 +174,7 @@
             font-size: 0.9rem;
         }
         .code-snippet {
-            background: #2d2d2d;
+            background: #1e293b;
             color: #f8f8f2;
             padding: 15px;
             border-radius: 8px;
@@ -195,11 +225,15 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero Section with Reference Image Style -->
     <header class="hero-section">
         <div class="container text-center">
-            <h1 class="display-3 fw-bold">Ready, Set, Connect!</h1>
-            <p class="lead opacity-75">How to setup a Thingspeak Account.</p>
+            <a href="#" class="btn-return-home">
+                <i data-lucide="arrow-left" class="me-2" style="width:18px;"></i>
+                Return to Home Page
+            </a>
+            <h1 class="hero-title">ThingSpeak <span>Connectivity</span></h1>
+            <p class="lead opacity-75 mt-3">Complete guide to setting up your IoT Cloud account.</p>
         </div>
     </header>
 
@@ -215,7 +249,7 @@
                                 In order to visualise the data from our sensor on the internet, we use a cloud service like <strong>ThingSpeak</strong>. 
                             </p>
                             <p class="text-secondary">
-                                This portal will guide you through these 4 activities to get your project online:
+                                This portal will guide you through these 4 activities:
                             </p>
                             <div class="row g-2 mb-4">
                                 <div class="col-6"><span class="activity-dot"></span>1. Join the service</div>
@@ -255,7 +289,6 @@
 
             <!-- Content Area -->
             <div class="col-lg-9">
-                
                 <!-- Section 1: Account -->
                 <section id="account" class="mb-5 pt-2">
                     <div class="step-card overflow-hidden">
@@ -271,12 +304,8 @@
                                     <span>Visit <a href="https://thingspeak.com" target="_blank" class="fw-bold">ThingSpeak.com</a> and click <strong>"Sign Up"</strong>.</span>
                                 </li>
                                 <li class="list-group-item d-flex align-items-start">
-                                    <i data-lucide="arrow-right" class="text-primary me-2 mt-1"></i>
-                                    <span>Follow the prompts to create a <strong>MathWorks Account</strong>.</span>
-                                </li>
-                                <li class="list-group-item d-flex align-items-start">
                                     <i data-lucide="mail" class="text-success me-2 mt-1"></i>
-                                    <span><strong>Crucial:</strong> Check your inbox for a verification email. You must click the link inside to activate your account.</span>
+                                    <span><strong>Verification:</strong> You must click the link in your email to activate the account.</span>
                                 </li>
                             </ul>
                         </div>
@@ -291,7 +320,7 @@
                             <h3 class="mb-0">Step 2: Create a Data "Vault"</h3>
                         </div>
                         <div class="p-4">
-                            <p class="text-muted">Next, you must create a Channel in the service to receive our data from the sensor.</p>
+                            <p class="text-muted">Create a Channel in the service to receive our data from the sensor.</p>
                             <div class="mock-ui mb-3">
                                 <div class="fw-bold mb-2">New Channel Settings</div>
                                 <div class="mb-1"><small>Name:</small> Library Monitor</div>
@@ -300,8 +329,8 @@
                             </div>
                             <ol>
                                 <li>Click <strong>Channels > My Channels > New Channel</strong>.</li>
-                                <li>Give it a Name and tick the checkboxes for <strong>Field 1</strong> and <strong>Field 2</strong>.</li>
-                                <li>Scroll to the bottom and click <strong>Save Channel</strong>.</li>
+                                <li>Give it a Name and enable <strong>Field 1</strong> and <strong>Field 2</strong>.</li>
+                                <li>Click <strong>Save Channel</strong> at the bottom.</li>
                             </ol>
                         </div>
                     </div>
@@ -315,37 +344,13 @@
                             <h3 class="mb-0">Step 3: The Secret Key (API Key)</h3>
                         </div>
                         <div class="p-4">
-                            <p class="text-muted">Now you will use a special key that will be assigned to our project by ThingSpeak, called the <strong>API Key</strong>.</p>
-                            
-                            <div class="tutorial-box">
-                                <h6 class="fw-bold mb-3"><i data-lucide="layout" class="me-2 text-primary"></i>ThingSpeak Dashboard Example:</h6>
-                                <div class="thingspeak-sim p-3">
-                                    <nav class="nav nav-tabs mb-3">
-                                        <span class="nav-link small py-1">Channel Settings</span>
-                                        <span class="nav-link active small py-1 fw-bold">API Keys</span>
-                                        <span class="nav-link small py-1">Data Import</span>
-                                    </nav>
-                                    
-                                    <div class="bg-white p-3 border rounded shadow-sm">
-                                        <div class="text-muted small mb-1">Write API Key</div>
-                                        <div class="key-box w-100 mb-2">5Q0JY180IP1076ES</div>
-                                        <button class="btn btn-sm btn-outline-secondary mb-3">Generate New Write API Key</button>
-                                        
-                                        <hr>
-                                        
-                                        <div class="text-muted small mb-2">API Requests (How the computer sends data)</div>
-                                        <div class="bg-light p-2 rounded x-small" style="font-size: 0.75rem; word-break: break-all;">
-                                            GET <code>https://api.thingspeak.com/update?api_key=5Q0JY180IP1076ES&field1=0</code>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mt-4">
-                                <h6 class="fw-bold"><i data-lucide="code" class="me-2 text-primary"></i>How to use it in your Code:</h6>
-                                <p class="small text-muted">You will paste your assigned key into your <code>wificonfig.py</code> file like this:</p>
-                                <div class="code-snippet">
-                                    <span style="color: #66d9ef;">THINGSPEAK_WRITE_API_KEY</span> = <span style="color: #e6db74;">'5Q0JY180IP1076ES'</span>
+                            <p class="text-muted">Use the unique <strong>API Key</strong> assigned to your project by ThingSpeak.</p>
+                            <div class="thingspeak-sim p-3">
+                                <div class="bg-white p-3 border rounded shadow-sm">
+                                    <div class="text-muted small mb-1">Write API Key</div>
+                                    <div class="key-box w-100 mb-2">5Q0JY180IP1076ES</div>
+                                    <hr>
+                                    <div class="small text-muted">Copy this key into your <code>wificonfig.py</code> file.</div>
                                 </div>
                             </div>
                         </div>
@@ -357,42 +362,13 @@
                     <div class="step-card overflow-hidden border border-primary border-2">
                         <div class="step-header d-flex align-items-center bg-primary text-white">
                             <span class="step-number me-3 bg-white text-primary">4</span>
-                            <h3 class="mb-0">Step 4: Pin It on the Map</h3>
+                            <h3 class="mb-0">Step 4: Pin the Location</h3>
                         </div>
                         <div class="p-4">
                             <h5 class="fw-bold mb-3">Make known the location of our sensor</h5>
-                            <p class="text-muted">Finally, we need to tell ThingSpeak where the sensor is physically located.</p>
-                            
-                            <!-- Google Maps Tutorial -->
-                            <div class="tutorial-box">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <ol class="small fw-500">
-                                            <li class="mb-3">Open <strong>Google Maps</strong> and search for <strong>"Tampines Regional Library"</strong>.</li>
-                                            <li class="mb-3"><strong>Right-Click</strong> on the building on the map.</li>
-                                            <li class="mb-3 text-primary fw-bold">The coordinates appear at the very top of the pop-up menu!</li>
-                                            <li>Click those numbers to copy them automatically.</li>
-                                        </ol>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="google-maps-sim">
-                                            <div class="small text-muted mb-2 text-center">Visual Example:</div>
-                                            <div style="height: 120px; background: #ddd; border-radius: 4px; display:flex; align-items:center; justify-content:center;">
-                                                <i data-lucide="map-pin" class="text-danger" style="width:32px; height:32px;"></i>
-                                            </div>
-                                            <div class="map-context-menu">
-                                                <div class="map-context-item highlight">1.3522, 103.9412</div>
-                                                <div class="map-context-item">Directions from here</div>
-                                                <div class="map-context-item">Search nearby</div>
-                                            </div>
-                                            <div class="mt-2 text-center"><small class="badge bg-primary">Top row = Your Coordinates</small></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                            <p class="text-muted">Tell ThingSpeak where the sensor is physically located.</p>
                             <div class="mt-4 p-3 bg-light rounded-4">
-                                <h6 class="fw-bold text-center mb-3">Tampines Library Coordinates (Ready to Use)</h6>
+                                <h6 class="fw-bold text-center mb-3">Tampines Library Coordinates</h6>
                                 <div class="row text-center">
                                     <div class="col-6 border-end">
                                         <div class="text-muted small text-uppercase">Latitude</div>
@@ -407,27 +383,10 @@
                         </div>
                     </div>
                 </section>
-
-                <!-- Help Section -->
-                <section id="faq" class="mb-5">
-                    <div class="card p-4 border-0 shadow-sm rounded-4 bg-white">
-                        <h4 class="fw-bold mb-3">Quick Glossary</h4>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Latitude:</strong> North/South position. Singapore is near <code>1.3</code>.</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>Longitude:</strong> East/West position. Singapore is near <code>103.8</code>.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="bg-dark text-white py-5">
         <div class="container text-center">
             <p class="small opacity-50">Community Tech Challenge: Library Sensor Project</p>
