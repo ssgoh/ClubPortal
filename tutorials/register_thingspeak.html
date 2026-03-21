@@ -172,8 +172,8 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
-            <!-- Used javascript:void(0) to prevent 404 navigation errors -->
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="javascript:void(0)" onclick="goHome()">
+            <!-- Using the goHome logic for branding -->
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="#" onclick="goHome(event)">
                 <i data-lucide="waves" class="me-2"></i>
                 Pi Python Club
             </a>
@@ -194,8 +194,8 @@
     <!-- Hero Section -->
     <header class="hero-section">
         <div class="container text-center">
-            <!-- Changed href to javascript:void(0) to avoid 404 in preview -->
-            <a href="javascript:void(0)" class="btn-return-home" onclick="goHome()">
+            <!-- Same onclick pattern as ledcontroller.html -->
+            <a href="#" class="btn-return-home" onclick="goHome(event)">
                 <i data-lucide="arrow-left" class="me-2" style="width:18px;"></i>
                 Return to Home Page
             </a>
@@ -364,11 +364,20 @@
     <script>
         lucide.createIcons();
         
-        // Simplified Home Navigation for Preview Environment
-        function goHome() {
+        // This is the specific logic used in ledcontroller.html
+        // It uses window.parent.postMessage to communicate with the host site
+        function goHome(event) {
+            if (event) event.preventDefault();
+            
+            // First, try a smooth scroll up for UX
             window.scrollTo({top: 0, behavior: 'smooth'});
-            // Remove the hash from the URL without triggering a reload
-            history.pushState("", document.title, window.location.pathname);
+
+            // This is the key logic from your ledcontroller.html for navigation within the club site
+            try {
+                window.parent.postMessage({ action: 'navigate', path: 'index.html' }, '*');
+            } catch (e) {
+                console.log("Navigation message sent");
+            }
         }
 
         function copyValue(val) {
