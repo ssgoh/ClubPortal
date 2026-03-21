@@ -47,6 +47,7 @@
             font-size: 0.9rem;
             transition: all 0.3s ease;
             margin-bottom: 30px;
+            cursor: pointer;
         }
         .btn-return-home:hover {
             background: rgba(255, 255, 255, 0.1);
@@ -207,7 +208,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="/">
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="index.html" onclick="goHome(event)">
                 <i data-lucide="waves" class="me-2"></i>
                 Pi Python Club
             </a>
@@ -225,15 +226,15 @@
         </div>
     </nav>
 
-    <!-- Hero Section with Reference Image Style -->
+    <!-- Hero Section -->
     <header class="hero-section">
         <div class="container text-center">
-            <a href="/" class="btn-return-home">
+            <a href="index.html" class="btn-return-home" onclick="goHome(event)">
                 <i data-lucide="arrow-left" class="me-2" style="width:18px;"></i>
                 Return to Home Page
             </a>
             <h1 class="hero-title">ThingSpeak <span>Connectivity</span></h1>
-            <p class="lead opacity-75 mt-3">Complete guide to setting up your IoT Cloud account.</p>
+            <p class="lead opacity-75 mt-3">How to Register for a Thingspeak Account.</p>
         </div>
     </header>
 
@@ -244,7 +245,7 @@
                 <div class="card intro-card p-4 p-md-5">
                     <div class="row align-items-center">
                         <div class="col-md-7">
-                            <h2 class="fw-bold mb-3">Welcome, IoT Explorer!</h2>
+                            <h2 class="fw-bold mb-3">Why Thingspeak?</h2>
                             <p class="lead text-muted mb-4">
                                 In order to visualise the data from our sensor on the internet, we use a cloud service like <strong>ThingSpeak</strong>. 
                             </p>
@@ -396,6 +397,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         lucide.createIcons();
+        
+        // Navigation helper
+        function goHome(e) {
+            // In many preview environments, navigating directly to a file name 
+            // causes a 404. We keep this JS as a safeguard to ensure the button 
+            // at least scrolls to top and cleans the URL state.
+            try {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            } catch (err) {
+                // If it fails, let the default link behavior take over
+            }
+        }
+
         function copyValue(val) {
             const el = document.createElement('textarea');
             el.value = val;
