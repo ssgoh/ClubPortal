@@ -101,9 +101,9 @@
 </head>
 <body class="p-4 md:p-8 min-h-screen">
 
-    <!-- Updated Return to Home Page Link to match ledcontroller.html -->
+    <!-- Navigation -->
     <nav class="flex justify-center mb-6">
-        <a href="ledcontroller.html" class="btn-return">
+        <a href="index.html" class="btn-return">
             <i class="fas fa-arrow-left text-[10px] me-2"></i>
             Return to Home Page
         </a>
@@ -116,12 +116,12 @@
         </header>
 
         <div class="glass-card overflow-hidden shadow-2xl">
+            <!-- Updated Tab Navigation (Projects Removed) -->
             <div class="flex border-b border-white/10 overflow-x-auto bg-slate-800/50 scrollbar-hide">
                 <button onclick="showTab('basics')" id="btn-basics" class="tab-btn active px-6 py-4 font-medium whitespace-nowrap">Basics</button>
                 <button onclick="showTab('breadboard')" id="btn-breadboard" class="tab-btn px-6 py-4 font-medium whitespace-nowrap">Breadboarding</button>
                 <button onclick="showTab('code')" id="btn-code" class="tab-btn px-6 py-4 font-medium whitespace-nowrap">MicroPython Code</button>
                 <button onclick="showTab('explanation')" id="btn-explanation" class="tab-btn px-6 py-4 font-medium whitespace-nowrap">Explanation</button>
-                <button onclick="showTab('projects')" id="btn-projects" class="tab-btn px-6 py-4 font-medium whitespace-nowrap">Pico W Projects</button>
             </div>
 
             <div class="p-6 md:p-10">
@@ -185,7 +185,7 @@
                     
                     <div class="mb-6 rounded-xl border border-white/10 overflow-hidden bg-slate-900 shadow-2xl">
                         <div class="p-2 bg-slate-800/50 border-b border-white/10 flex justify-between items-center">
-                            <span class="text-[10px] uppercase tracking-widest font-bold text-slate-400 px-2">SG90 Servo Wiring Diagram</span>
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-slate-400 px-2">SG90 Servo Wiring Diagram (720p Opt.)</span>
                             <div class="flex gap-1.5 px-2">
                                 <div class="w-2 h-2 rounded-full bg-red-500/50"></div>
                                 <div class="w-2 h-2 rounded-full bg-amber-500/50"></div>
@@ -196,7 +196,7 @@
                              <img src="sg90servo_wiring.png" alt="Wiring Diagram" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" class="w-full h-auto object-contain">
                              <div class="hidden py-20 flex-col items-center text-slate-700">
                                 <i class="fas fa-microchip text-5xl mb-3"></i>
-                                <p class="text-xs font-medium">SG90 Servo Wiring </p>
+                                <p class="text-xs font-medium text-center">SG90 Servo Wiring Diagram<br><span class="text-[10px] opacity-50">1280 x 720 Optimized</span></p>
                              </div>
                         </div>
                     </div>
@@ -275,20 +275,6 @@ while True:
                             <div class="equation-part">
                                 <span class="text-sky-400">+ 1638</span>
                                 <p class="font-sans text-slate-400 mt-1 text-[11px]">Adds the starting offset so 0° begins at the required 0.5ms pulse mark.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab: Projects -->
-                <div id="tab-projects" class="tab-content hidden">
-                    <h2 class="text-2xl font-semibold mb-6 text-sky-300">Pico W Projects</h2>
-                    <div class="grid gap-4">
-                        <div class="flex items-center p-4 bg-slate-900/60 rounded-xl border border-white/5">
-                            <i class="fas fa-lock text-sky-400 text-xl me-4"></i>
-                            <div>
-                                <h4 class="font-bold text-sm text-slate-100">IoT Door Lock</h4>
-                                <p class="text-[11px] text-slate-400">Trigger the servo via a web dashboard.</p>
                             </div>
                         </div>
                     </div>
