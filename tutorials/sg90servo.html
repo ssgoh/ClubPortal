@@ -83,11 +83,6 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .math-highlight {
-            color: #38bdf8;
-            font-weight: 700;
-        }
-
         .calc-step {
             border-left: 2px solid #38bdf8;
             padding-left: 1rem;
@@ -130,7 +125,6 @@
 
             <div class="p-6 md:p-10">
                 
-                <!-- Tab: Basics -->
                 <div id="tab-basics" class="tab-content">
                     <div class="grid md:grid-cols-2 gap-8 items-center">
                         <div class="space-y-4">
@@ -160,22 +154,21 @@
                     </div>
                 </div>
 
-                <!-- Tab: Breadboarding -->
                 <div id="tab-breadboard" class="tab-content hidden">
                     <h2 class="text-2xl font-semibold mb-6 text-sky-300">Wiring Connections</h2>
                     <div class="grid md:grid-cols-2 gap-6 items-start">
                         <div class="p-6 bg-slate-900/40 rounded-xl border border-white/5 transition hover:border-sky-500/40">
                             <i class="fas fa-plug text-sky-400 text-2xl mb-3"></i>
                             <h4 class="font-bold text-white mb-2">Jumper Wire Bridge</h4>
-                            <p class="text-sm text-slate-400 mb-4">The easiest way to connect the servo's female plug to a breadboard is using Male-to-Male jumper wires as shown in the reference image.</p>
+                            <p class="text-sm text-slate-400 mb-4">Connecting the servo's female plug to a breadboard is done using Male-to-Male jumper wires.</p>
                             <ul class="text-[11px] text-slate-500 space-y-2 list-disc list-inside">
                                 <li>Ensure the metal tips seat firmly in the socket.</li>
-                                <li>Use color-coded wires (Orange, Red, Brown/Black) to prevent wiring errors.</li>
-                                <li>Tape the connection point if the wires feel loose.</li>
+                                <li>Use color-coded wires (Orange, Red, Brown/Black).</li>
+                                <li>The image shows the proper "bridge" technique.</li>
                             </ul>
                         </div>
                         <div class="rounded-xl border border-white/10 overflow-hidden shadow-lg bg-slate-900">
-                            <img src="sg90servo_breadboard.png" alt="Servo Jumper Wire Connection" class="w-full h-auto object-cover opacity-90">
+                            <img src="temp.png" alt="Servo Jumper Wire Connection" class="w-full h-auto object-cover opacity-90">
                             <div class="p-3 bg-slate-800/80 text-[10px] text-slate-400 text-center italic">
                                 Proper Male-to-Male jumper bridge setup
                             </div>
@@ -183,20 +176,36 @@
                     </div>
                 </div>
 
-                <!-- Tab: MicroPython Code -->
                 <div id="tab-code" class="tab-content hidden">
-                    <h2 class="text-2xl font-semibold mb-4 text-sky-300">MicroPython Script</h2>
+                    <h2 class="text-2xl font-semibold mb-4 text-sky-300">Wiring & Code</h2>
+                    
+                    <div class="mb-6 rounded-xl border border-white/10 overflow-hidden bg-slate-900 shadow-2xl">
+                        <div class="p-2 bg-slate-800/50 border-b border-white/10 flex justify-between items-center">
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-slate-400 px-2">SG90 Servo Wiring Diagram</span>
+                            <div class="flex gap-1.5 px-2">
+                                <div class="w-2 h-2 rounded-full bg-red-500/50"></div>
+                                <div class="w-2 h-2 rounded-full bg-amber-500/50"></div>
+                                <div class="w-2 h-2 rounded-full bg-green-500/50"></div>
+                            </div>
+                        </div>
+                        <div class="relative w-full overflow-hidden bg-slate-950 flex items-center justify-center" style="max-height: 400px;">
+                             <img src="sg90servo_wiring.png" alt="Wiring Diagram" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" class="w-full h-auto object-contain">
+                             <div class="hidden py-20 flex-col items-center text-slate-700">
+                                <i class="fas fa-microchip text-5xl mb-3"></i>
+                                <p class="text-xs font-medium">SG90 Servo Wiring </p>
+                             </div>
+                        </div>
+                    </div>
+
                     <pre class="rounded-xl overflow-hidden border border-white/10 text-xs md:text-sm shadow-lg"><code>from machine import Pin, PWM
 import utime
 
+# Setup PWM on GP15
 servo = PWM(Pin(15))
 servo.freq(50) # 50Hz = 20ms period
 
 def set_servo_angle(angle):
-    # The Formula Breakdown:
-    # 1. (angle / 180) -> Percentage of travel
-    # 2. * 6554        -> Scale to duty range (8192 - 1638)
-    # 3. + 1638        -> Shift by min duty offset
+    # duty = percentage of arc * range + offset
     duty = int(((angle / 180) * 6554) + 1638)
     servo.duty_u16(duty)
 
@@ -207,47 +216,32 @@ while True:
         utime.sleep(1)</code></pre>
                 </div>
 
-                <!-- Tab: Explanation -->
                 <div id="tab-explanation" class="tab-content hidden">
                     <h2 class="text-2xl font-semibold mb-4 text-sky-300">The Math Behind the Signal</h2>
                     
                     <div class="space-y-6 text-sm">
-                        
-                        <!-- Origin of 65535 Section -->
                         <div class="p-5 bg-slate-900/80 rounded-xl border border-white/5">
-                            <h3 class="text-sky-300 font-bold mb-4 uppercase tracking-widest text-xs">Why 65,535? (The Resolution)</h3>
+                            <h3 class="text-sky-300 font-bold mb-4 uppercase tracking-widest text-xs">Why 65,535?</h3>
                             <p class="text-slate-300 leading-relaxed mb-4">
-                                The Pico W uses a <b>16-bit</b> controller for its PWM. In binary, a 16-bit number has $2^{16}$ (65,536) possible values. Since we start at 0, the maximum setting is <span class="text-sky-400 font-bold">65,535</span>.
+                                The Pico uses <b>16-bit</b> PWM resolution. A 16-bit number ranges from 0 to <span class="text-sky-400 font-bold">65,535</span> ($2^{16} - 1$).
                             </p>
-                            <div class="bg-slate-800/60 p-4 rounded-lg border-l-4 border-sky-500">
-                                <p class="text-[11px] text-slate-200">
-                                    Think of the 20ms signal window as a <b>ruler</b>. MicroPython divides this window into 65,535 microscopic markings. One "mark" represents just 305 nanoseconds!
-                                </p>
-                            </div>
                         </div>
 
-                        <!-- Step-by-Step Derivation -->
                         <h3 class="text-sky-300 font-bold pt-4 border-t border-white/10 uppercase text-xs tracking-widest">Step-by-Step Derivation</h3>
                         
                         <div class="space-y-6 text-slate-300">
-                            <!-- Step 1 -->
                             <div class="calc-step">
                                 <p class="font-bold text-white text-xs mb-1">1. Finding the Period (The Window)</p>
-                                <p class="text-[11px]">Frequency is 50Hz, so we find how many milliseconds are in one cycle:</p>
-                                <div class="math-box text-sky-400">1 second / 50 Hz = 0.02s = 20ms</div>
+                                <div class="math-box text-sky-400">1 second / 50 Hz = 20ms total time</div>
                             </div>
 
-                            <!-- Step 2 -->
                             <div class="calc-step">
                                 <p class="font-bold text-white text-xs mb-1">2. Calculating the "Granularity"</p>
-                                <p class="text-[11px]">We divide our 20ms window by our 65,535 available steps to see how much time each step represents:</p>
-                                <div class="math-box text-sky-400">20ms / 65,535 ≈ 0.00030517 ms per step</div>
+                                <div class="math-box text-sky-400">20ms / 65,535 ≈ 0.000305 ms per step</div>
                             </div>
 
-                            <!-- Step 3 -->
                             <div class="calc-step">
-                                <p class="font-bold text-white text-xs mb-1">3. Finding our Pulse Values</p>
-                                <p class="text-[11px]">The SG90 servo needs a pulse between 0.5ms (0°) and 2.5ms (180°). We find the step count by dividing the target pulse by our "Granularity":</p>
+                                <p class="font-bold text-white text-xs mb-1">3. Finding Pulse Values</p>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                                     <div class="bg-black/20 p-3 rounded border border-white/5">
                                         <div class="text-[10px] uppercase text-slate-500 mb-1">0° Position (0.5ms)</div>
@@ -261,45 +255,34 @@ while True:
                             </div>
                         </div>
 
-                        <!-- Original Equation Explanation -->
                         <h3 class="text-sky-300 font-bold pt-4 border-t border-white/10 uppercase text-xs tracking-widest">The Duty Cycle Equation</h3>
-                        <p class="text-[11px] text-slate-400">This is how we convert any angle (0-180) into the final 16-bit number using this equation <code>duty = int(((angle / 180) * 6554) + 1638)</code>: </p>
+                        <p class="text-[11px] text-slate-400"><code>duty = int(((angle / 180) * 6554) + 1638)</code></p>
                         
                         <div class="space-y-3 font-mono">
                             <div class="equation-part">
                                 <span class="text-sky-400">(angle / 180)</span>
-                                <p class="font-sans text-slate-400 mt-1 text-[11px]">Converts your angle into a percentage of travel (0.0 to 1.0).</p>
+                                <p class="font-sans text-slate-400 mt-1 text-[11px]">Percentage of total travel (0.0 to 1.0).</p>
                             </div>
-                            
                             <div class="equation-part">
                                 <span class="text-sky-400">* 6554</span>
-                                <p class="font-sans text-slate-400 mt-1 text-[11px]">Multiplies the percentage by the <b>Range</b> (8192 max - 1638 min = 6554).</p>
+                                <p class="font-sans text-slate-400 mt-1 text-[11px]">Scaled to the movement range (8192 - 1638).</p>
                             </div>
-
                             <div class="equation-part">
                                 <span class="text-sky-400">+ 1638</span>
-                                <p class="font-sans text-slate-400 mt-1 text-[11px]">Adds the <b>Starting Offset</b> so 0° begins at the required 0.5ms pulse mark.</p>
+                                <p class="font-sans text-slate-400 mt-1 text-[11px]">Adds the starting offset so 0° begins at the required 0.5ms pulse mark.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tab: Projects -->
                 <div id="tab-projects" class="tab-content hidden">
                     <h2 class="text-2xl font-semibold mb-6 text-sky-300">Pico W Projects</h2>
                     <div class="grid gap-4">
-                        <div class="flex items-center p-4 bg-slate-900/60 rounded-xl border border-white/5 transition hover:bg-slate-800/60">
+                        <div class="flex items-center p-4 bg-slate-900/60 rounded-xl border border-white/5">
                             <i class="fas fa-lock text-sky-400 text-xl me-4"></i>
                             <div>
                                 <h4 class="font-bold text-sm text-slate-100">IoT Door Lock</h4>
-                                <p class="text-[11px] text-slate-400">Trigger the servo via a web dashboard to unlock doors.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center p-4 bg-slate-900/60 rounded-xl border border-white/5 transition hover:bg-slate-800/60">
-                            <i class="fas fa-sun text-sky-400 text-xl me-4"></i>
-                            <div>
-                                <h4 class="font-bold text-sm text-slate-100">Solar Tracker</h4>
-                                <p class="text-[11px] text-slate-400">Tilt panels toward the sun using light sensors.</p>
+                                <p class="text-[11px] text-slate-400">Trigger the servo via a web dashboard.</p>
                             </div>
                         </div>
                     </div>
@@ -309,7 +292,7 @@ while True:
         </div>
         
         <footer class="mt-12 text-center text-slate-600 text-xs">
-            2024 Embedded Labs &bull; Raspberry Pi Pico W Series
+            2026 Embedded Labs &bull; Raspberry Pi Pico W Series
         </footer>
     </div>
 
