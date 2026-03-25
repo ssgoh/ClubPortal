@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSD1306 OLED Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-return {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #334155;
+            color: #f8fafc;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .btn-return:hover {
+            background-color: #475569;
+        }
+
+        /* SSD1306 Simulation Style */
+        .oled-screen {
+            background-color: #000;
+            border: 8px solid #2d2d2d;
+            border-radius: 8px;
+            width: 256px;
+            height: 128px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #00ffff;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            margin: 0 auto;
+        }
+
+        .oled-time { font-size: 2rem; font-weight: bold; }
+        .oled-date { font-size: 1.1rem; margin-top: 4px; }
+        .oled-temp { font-size: 1.2rem; margin-top: 8px; color: #ffff00; }
+
+        .pin-badge {
+            background: #0ea5e9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .code-container {
+            position: relative;
+        }
+
+        pre {
+            background: #0f172a !important;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #334155;
+            color: #94a3b8;
+            border: 1px solid #475569;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #475569;
+            color: #fff;
+        }
+
+        /* Tab Styles */
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: #94a3b8;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            color: #38bdf8;
+            border-bottom-color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Zoom effect for wiring */
+        .wiring-wrapper {
+            transition: transform 0.3s ease;
+            cursor: zoom-in;
+        }
+        .wiring-wrapper:hover {
+            transform: scale(1.02);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Header Navigation -->
+    <nav class="flex justify-center mb-6">
+        <a href="../index.html" class="btn-return">
+            <i class="fas fa-arrow-left text-[10px] me-2"></i>
+            Return to Home Page
+        </a>
+    </nav>
+
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Live Preview Header -->
+        <div class="card p-6 text-center">
+            <h1 class="text-2xl font-bold mb-2 text-white">SSD1306 & DHT11 Monitor</h1>
+            <p class="text-slate-400 mb-8">Pico W Environment Station Preview</p>
+
+            <div class="oled-screen mb-6">
+                <div id="display-date" class="oled-date">-- --- --</div>
+                <div id="display-time" class="oled-time">00:00:00</div>
+                <div id="display-temp" class="oled-temp">Temp: --°C</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-sm max-w-md mx-auto">
+                <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                    <span class="block text-slate-500 uppercase text-xs mb-1">Status</span>
+                    <span class="text-emerald-400 flex items-center justify-center font-medium">
+                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-ping mr-2"></span>
+                        Pico W Online
+                    </span>
+                </div>
+                <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                    <span class="block text-slate-500 uppercase text-xs mb-1">Controller</span>
+                    <span class="text-white">RP2040</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABS CONTAINER -->
+        <div class="card overflow-hidden">
+            <!-- Tab Buttons -->
+            <div class="flex border-b border-slate-700 bg-slate-800/30">
+                <div class="tab-btn active" onclick="openTab(event, 'wiring-tab')">
+                    <i class="fas fa-plug mr-2"></i> Wiring
+                </div>
+                <div class="tab-btn" onclick="openTab(event, 'code-tab')">
+                    <i class="fas fa-code mr-2"></i> MicroPython Code
+                </div>
+                <div class="tab-btn" onclick="openTab(event, 'explanation-tab')">
+                    <i class="fas fa-info-circle mr-2"></i> Explanation
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6">
+                <!-- 1. WIRING CONTENT -->
+                <div id="wiring-tab" class="tab-content active">
+                    <div class="space-y-8">
+                        <!-- Pin Mapping Section -->
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Quick Connection Reference</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="p-3 bg-slate-800/50 border border-slate-700 rounded-md">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <p class="font-medium text-white text-sm">SSD1306 OLED (I2C)</p>
+                                        <span class="pin-badge">I2C</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400">SDA: GP16 | SCL: GP17</p>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 border border-slate-700 rounded-md">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <p class="font-medium text-white text-sm">DHT11 Sensor</p>
+                                        <span class="pin-badge">GPIO</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400">Data Pin: GP15</p>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 border border-slate-700 rounded-md">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <p class="font-medium text-white text-sm">Power</p>
+                                        <span class="pin-badge bg-red-500">3.3V</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400">VCC -> 3V3 | GND -> GND</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Large Wiring Diagram Section -->
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Fritzing Wiring Diagram</h3>
+                            <div class="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden p-6 min-h-[450px] flex items-center justify-center">
+                                <div class="wiring-wrapper w-full max-w-3xl">
+                                    <img src="digitalclockwithdht11_wiring.png" alt="Detailed Wiring Diagram" class="w-full h-auto rounded-lg shadow-2xl" onerror="this.parentElement.innerHTML='<div class=\'text-center p-12\'><i class=\'fas fa-project-diagram text-5xl mb-4 text-slate-700\'></i><p class=\'text-slate-500 font-medium\'>Wiring Diagram Placeholder</p><p class=\'text-xs text-slate-600 mt-2 italic\'>Upload digitalclockwithdht11_wiring.png to this directory</p></div>'">
+                                </div>
+                            </div>
+                            <p class="mt-4 text-center text-xs text-slate-500 italic">Diagram optimized for 1920x1080px resolution.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. CODE CONTENT -->
+                <div id="code-tab" class="tab-content">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="text-sm text-slate-400">Upload this to your Pico W using Thonny (requires <code>ssd1306.py</code> library):</p>
+                    </div>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode()">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+                        <pre><code id="pico-code">from machine import Pin, I2C
+import ssd1306
+import dht
+import time
+
+# Pin setup
+i2c = I2C(0, sda=Pin(16), scl=Pin(17))
+oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+sensor = dht.DHT11(Pin(15))
+
+while True:
+    try:
+        sensor.measure()
+        temp = sensor.temperature()
+        
+        # Get local time from the internal RTC
+        t = time.localtime()
+        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        
+        # Using f-strings for cleaner string formatting
+        date_str = f"{t[2]:02d} {months[t[1]-1]} {t[0]%100:02d}"
+        time_str = f"{t[3]:02d}:{t[4]:02d}:{t[5]:02d}"
+        
+        oled.fill(0)
+        oled.text(date_str, 25, 10)
+        oled.text(time_str, 20, 30)
+        oled.text(f"Temp: {temp} C", 25, 50)
+        oled.show()
+        
+    except Exception as e:
+        # If the sensor fails (e.g. loose wire), show an error 
+        # instead of crashing the whole program.
+        oled.fill(0)
+        oled.text("Sensor Error", 10, 30)
+        oled.show()
+        
+    time.sleep(1)</code></pre>
+                    </div>
+                    <div id="copy-toast" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 bg-sky-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-50">
+                        Code copied to clipboard!
+                    </div>
+                </div>
+
+                <!-- 3. EXPLANATION CONTENT -->
+                <div id="explanation-tab" class="tab-content">
+                    <div class="space-y-4 text-slate-300 text-sm leading-relaxed">
+                        <div class="p-4 bg-slate-800/40 rounded-lg border border-slate-700">
+                            <h4 class="text-sky-400 font-bold mb-2 uppercase text-xs">Why Use Try/Except?</h4>
+                            <p class="mb-3">In hardware projects, sensors like the <strong>DHT11</strong> are prone to intermittent communication failures. If a wire is slightly loose or the signal timing is off, the <code>sensor.measure()</code> command will throw an <strong>Exception</strong>.</p>
+                            <ul class="list-disc ml-5 space-y-2 text-slate-400">
+                                <li><strong>Prevent Crashing:</strong> Without <code>try/except</code>, any small sensor error would stop the entire MicroPython program immediately.</li>
+                                <li><strong>Graceful Failure:</strong> Using <code>except</code> allows the code to catch the error, display "Sensor Error" on the OLED, and try again in the next loop without stopping.</li>
+                                <li><strong>Debugging:</strong> It helps you identify if hardware is disconnected while keeping the time-display part of your project running.</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 bg-slate-800/40 rounded-lg border border-slate-700">
+                            <h4 class="text-sky-400 font-bold mb-1 uppercase text-xs">Date & Time Logic</h4>
+                            <p class="mb-3">The Pico W tracks time using an internal <strong>Real-Time Clock (RTC)</strong>. We access this via <code>time.localtime()</code>, which returns a Python <strong>Tuple</strong>.</p>
+                            
+                            <div class="bg-slate-900 p-3 rounded font-mono text-xs mb-3 border border-slate-700">
+                                <span class="text-slate-500"># time.localtime() returns:</span><br>
+                                <span class="text-white">t = (2024, 3, 15, 14, 30, 05, 4, 75, 0)</span><br>
+                                <span class="text-sky-400">index: [0] [1] [2] [3] [4] [5] [6] [7] [8]</span>
+                            </div>
+
+                            <p class="mb-2">Because Python indices start at <strong>0</strong>, we use the following mapping:</p>
+                            <ul class="list-disc ml-5 space-y-2 text-slate-400">
+                                <li><strong>t[0]:</strong> Year (e.g., 2024)</li>
+                                <li><strong class="text-white">t[1]:</strong> Month (1 to 12). In the code, we use <code>months[t[1]-1]</code> to get the name.</li>
+                                <li><strong class="text-white">t[2]:</strong> Day of the month (1 to 31).</li>
+                                <li><strong>t[3], t[4], t[5]:</strong> Hours, Minutes, and Seconds.</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 bg-slate-800/40 rounded-lg border border-slate-700">
+                            <h4 class="text-sky-400 font-bold mb-1 uppercase text-xs">I2C Communication</h4>
+                            <p>The SSD1306 OLED display communicates via I2C. We use GP16 (SDA) and GP17 (SCL). These pins are an alternative set of hardware I2C0 pins on the Pico W, which can help avoid wiring congestion near the top pins.</p>
+                        </div>
+                        <div class="p-4 bg-slate-800/40 rounded-lg border border-slate-700">
+                            <h4 class="text-sky-400 font-bold mb-1 uppercase text-xs">DHT11 Logic</h4>
+                            <p>The DHT11 uses a single-wire digital protocol on GP15. The <code>dht</code> library handles the precise timing required to pull data from the sensor's internal humidity and temperature registers.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching logic
+        function openTab(evt, tabId) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Copy code functionality
+        function copyCode() {
+            const codeElement = document.getElementById('pico-code');
+            const codeText = codeElement.innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = codeText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            const toast = document.getElementById('copy-toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2000);
+        }
+
+        // Display update logic (Simulation)
+        function updateDisplay() {
+            const now = new Date();
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('display-time').textContent = `${hours}:${minutes}:${seconds}`;
+
+            const days = String(now.getDate()).padStart(2, '0');
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const monthStr = months[now.getMonth()];
+            const year = String(now.getFullYear()).slice(-2);
+            document.getElementById('display-date').textContent = `${days} ${monthStr} ${year}`;
+
+            const baseTemp = 24;
+            const fluctuation = (Math.random() * 2 - 1).toFixed(1);
+            const currentTemp = (parseFloat(baseTemp) + parseFloat(fluctuation)).toFixed(1);
+            document.getElementById('display-temp').textContent = `Temp: ${currentTemp}°C`;
+        }
+
+        setInterval(updateDisplay, 1000);
+        updateDisplay();
+    </script>
+</body>
+</html>
