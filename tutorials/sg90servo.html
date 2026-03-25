@@ -90,6 +90,31 @@
             font-size: 0.8rem;
             margin-top: 0.5rem;
         }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            background: rgba(56, 189, 248, 0.2);
+        }
+
+        .copy-btn.success {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen">
@@ -175,7 +200,11 @@
                     <div class="mb-6 rounded-xl border border-white/10 overflow-hidden bg-slate-900 shadow-2xl">
                          <img src="sg90servo_wiring.png" alt="SG90 Servo Wiring Diagram" class="w-full h-auto object-contain">
                     </div>
-                    <pre class="rounded-xl overflow-hidden border border-white/10 text-xs md:text-sm"><code>from machine import Pin, PWM
+                    <div class="relative group">
+                        <button onclick="copyToClipboard()" id="copy-btn" class="copy-btn">
+                            <i class="fas fa-copy me-1"></i> Copy Code
+                        </button>
+                        <pre class="rounded-xl overflow-hidden border border-white/10 text-xs md:text-sm"><code id="python-code">from machine import Pin, PWM
 import utime
 
 # Setup PWM on GP15
@@ -191,6 +220,7 @@ while True:
     for target in [0, 45, 90, 135, 180]:
         set_servo_angle(target)
         utime.sleep(1)</code></pre>
+                    </div>
                 </div>
 
                 <!-- Tab: Explanation -->
@@ -201,7 +231,7 @@ while True:
                         <div class="p-5 bg-slate-900/80 rounded-xl border border-white/5">
                             <h3 class="text-sky-300 font-bold mb-4 uppercase tracking-widest text-xs">Why 65,535?</h3>
                             <p class="text-slate-300 leading-relaxed mb-4">
-                                The Pico uses <b>16-bit</b> PWM resolution. A 16-bit number ranges from 0 to <span class="text-sky-400 font-bold">65,535</span> is (2^16) - 1.
+                                The Pico uses <b>16-bit</b> PWM resolution. A 16-bit number ranges from 0 to <span class="text-sky-400 font-bold">65,535</span> ($2^{16} - 1$).
                             </p>
                         </div>
 
@@ -235,6 +265,28 @@ while True:
             document.getElementById('tab-' + id).classList.remove('hidden');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-' + id).classList.add('active');
+        }
+
+        function copyToClipboard() {
+            const code = document.getElementById('python-code').innerText;
+            const btn = document.getElementById('copy-btn');
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = code;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                btn.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
+                btn.classList.add('success');
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-copy me-1"></i> Copy Code';
+                    btn.classList.remove('success');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+            document.body.removeChild(textarea);
         }
 
         let step = 0;
