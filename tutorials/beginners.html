@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pico W Starter Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --code-bg: #1e1e2e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .btn-return {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1.25rem;
+            background-color: white;
+            color: #374151;
+            font-weight: 600;
+            border-radius: 9999px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            border: 1px solid #e5e7eb;
+            text-decoration: none;
+        }
+
+        .btn-return:hover {
+            background-color: #f9fafb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: #d1d1e0;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .step-number {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        details summary {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        details summary:hover {
+            background: #e2e8f0;
+        }
+
+        details[open] summary {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .try-this {
+            border-left: 4px solid #10b981;
+            background: #ecfdf5;
+            padding: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .diagram-container {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .diagram-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <nav class="flex justify-center mb-6">
+        <a href="../index.html" class="btn-return">
+            <i class="fas fa-arrow-left text-[10px] me-2"></i>
+            Return to Home Page
+        </a>
+    </nav>
+
+    <header class="max-w-4xl mx-auto text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
+            🚀 Your First Steps with Pico W
+        </h1>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+            Welcome, maker! We're going to use two LEDs (Red and Green), a button, and a buzzer to build interactive projects. Ready to level up?
+        </p>
+    </header>
+
+    <main class="max-w-4xl mx-auto space-y-12">
+
+        <!-- Setup Section -->
+        <section class="card p-6 md:p-8 bg-gradient-to-br from-indigo-50 to-white border-indigo-100">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-tools me-3 text-indigo-600"></i> The Toolkit
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <h3 class="font-semibold mb-2 text-slate-800">You will need:</h3>
+                    <ul class="space-y-2 text-slate-700">
+                        <li><i class="fas fa-check text-green-500 me-2"></i> Raspberry Pi Pico W</li>
+                        <li><i class="fas fa-check text-red-500 me-2"></i> 1x Red LED & 1x Green LED</li>
+                        <li><i class="fas fa-check text-green-500 me-2"></i> Breadboard & Jumper Wires</li>
+                        <li><i class="fas fa-check text-green-500 me-2"></i> Push Button & Buzzer</li>
+                    </ul>
+                </div>
+                <div class="bg-indigo-100 p-4 rounded-lg">
+                    <p class="text-sm font-medium text-indigo-800">
+                        <strong>💡 Wire Layout:</strong><br>
+                        • Red LED: Pin <strong>GP15</strong><br>
+                        • Green LED: Pin <strong>GP14</strong><br>
+                        • Button: Pin <strong>GP13</strong><br>
+                        • Buzzer: Pin <strong>GP18</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Wiring Diagram Image -->
+            <div class="mb-8">
+                <h3 class="font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fas fa-project-diagram me-2 text-indigo-500"></i> Wiring Diagram Reference
+                </h3>
+                <div class="diagram-container">
+                    <img src="beginners.png" alt="Pico W Wiring Diagram" class="diagram-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <!-- Fallback if image fails to load -->
+                    <div class="hidden p-8 text-center flex-col items-center justify-center text-slate-400">
+                        <i class="fas fa-image text-4xl mb-2"></i>
+                        <p class="text-sm">Wiring diagram (beginners.png) not found.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Highlighted Footnote -->
+            <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start">
+                <i class="fas fa-info-circle text-amber-500 mt-1 me-3"></i>
+                <p class="text-sm text-amber-900">
+                    <strong>Important:</strong> You will need to install the <strong>picozero</strong> library using the <strong>Package Manager</strong> (usually found in Tools > Manage Packages in Thonny), if you haven't got it in your Pico W library yet.
+                </p>
+            </div>
+        </section>
+
+        <!-- Exercise 1 -->
+        <section id="ex1" class="space-y-4">
+            <div class="level-badge bg-blue-100 text-blue-700">Level 1: The First Blink</div>
+            <div class="card p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-2">Exercise 1: Red Light, Green Light</h2>
+                <p class="text-slate-600 mb-6">Let's make our Red LED blink while keeping the Green LED off.</p>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-6">
+                    <div class="space-y-4">
+                        <h3 class="font-bold text-slate-800">Wiring Guide:</h3>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-dashed border-slate-300">
+                            <ul class="text-sm space-y-2 text-slate-700">
+                                <li><strong>Red LED:</strong> Long leg to <strong>GP15</strong></li>
+                                <li><strong>Green LED:</strong> Long leg to <strong>GP14</strong></li>
+                                <li><strong>Short Legs:</strong> Connect both short legs directly to any <strong>GND</strong> pin.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center bg-slate-100 rounded-lg p-4">
+                        <div class="flex space-x-4">
+                            <i class="fas fa-circle text-4xl text-red-500 animate-pulse"></i>
+                            <i class="fas fa-circle text-4xl text-green-900"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <details class="mb-6">
+                    <summary>View MicroPython Code</summary>
+                    <div class="mt-4">
+                        <pre class="code-block"><code>from picozero import LED
+from time import sleep
+
+red = LED(15)
+green = LED(14)
+
+while True:
+    red.on()
+    sleep(1)
+    red.off()
+    sleep(1)</code></pre>
+                    </div>
+                </details>
+
+                <div class="try-this">
+                    <p class="text-sm"><strong>🌟 Try This:</strong> Can you make them alternate? Turn Red on, wait, turn Red off and Green on, wait, and repeat!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercise 2 -->
+        <section id="ex2" class="space-y-4">
+            <div class="level-badge bg-purple-100 text-purple-700">Level 2: Fading Colors</div>
+            <div class="card p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-2">Exercise 2: Dimming the Green LED</h2>
+                <p class="text-slate-600 mb-6">Let's make the Green LED glow softly using PWM.</p>
+                
+                <details class="mb-6">
+                    <summary>View MicroPython Code</summary>
+                    <div class="mt-4">
+                        <pre class="code-block"><code>from picozero import LED
+from time import sleep
+
+green = LED(14)
+
+while True:
+    green.brightness = 0.2  # Dim
+    sleep(1)
+    green.brightness = 1.0  # Full power!
+    sleep(1)</code></pre>
+                    </div>
+                </details>
+
+                <div class="try-this">
+                    <p class="text-sm"><strong>🌟 Try This:</strong> Use <code>green.pulse()</code> to make it fade in and out like it's breathing.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercise 3 -->
+        <section id="ex3" class="space-y-4">
+            <div class="level-badge bg-pink-100 text-pink-700">Level 3: Interactivity</div>
+            <div class="card p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-2">Exercise 3: Toggle Switch</h2>
+                <p class="text-slate-600 mb-6">Use a button to switch between the Red and Green lights.</p>
+                
+                <div class="bg-slate-50 p-4 rounded-lg border border-dashed border-slate-300 mb-6">
+                    <h3 class="font-bold text-slate-800 text-sm mb-2">Wiring the Button:</h3>
+                    <p class="text-sm">Connect one side of the button to <strong>GP13</strong> and the other side to <strong>GND</strong>.</p>
+                </div>
+
+                <details class="mb-6">
+                    <summary>View MicroPython Code</summary>
+                    <div class="mt-4">
+                        <pre class="code-block"><code>from picozero import LED, Button
+from signal import pause
+
+red = LED(15)
+green = LED(14)
+button = Button(13)
+
+def switch_lights():
+    red.toggle()
+    green.toggle()
+
+# Start with Red on
+red.on()
+green.off()
+
+button.when_pressed = switch_lights
+
+pause()</code></pre>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- Exercise 4 -->
+        <section id="ex4" class="space-y-4">
+            <div class="level-badge bg-yellow-100 text-yellow-700">Level 4: Sound Feedback</div>
+            <div class="card p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-2">Exercise 4: The Warning Buzzer</h2>
+                <p class="text-slate-600 mb-6">Buzzers are perfect for adding audio alerts to your hardware.</p>
+                
+                <details class="mb-6">
+                    <summary>View MicroPython Code</summary>
+                    <div class="mt-4">
+                        <pre class="code-block"><code>from picozero import Buzzer
+from time import sleep
+
+buzzer = Buzzer(18)
+
+# Beep 3 times quickly
+buzzer.beep(on_time=0.1, off_time=0.1, n=3)</code></pre>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- Exercise 5 -->
+        <section id="ex5" class="space-y-4">
+            <div class="level-badge bg-emerald-100 text-emerald-700">Level 5: Master Project</div>
+            <div class="card p-6 md:p-8 border-2 border-emerald-200">
+                <div class="flex items-center mb-4">
+                    <div class="step-number bg-emerald-500 me-4"><i class="fas fa-traffic-light"></i></div>
+                    <h2 class="text-2xl font-bold">The Smart Doorbell</h2>
+                </div>
+                <p class="text-slate-600 mb-6">A button that rings the buzzer and flashes the Red light to get your attention!</p>
+                
+                <details class="mb-6">
+                    <summary>View Code</summary>
+                    <div class="mt-4">
+                        <pre class="code-block"><code>from picozero import LED, Button, Buzzer
+from signal import pause
+
+red = LED(15)
+button = Button(13)
+buzzer = Buzzer(18)
+
+button.when_pressed = lambda: (red.on(), buzzer.on())
+button.when_released = lambda: (red.off(), buzzer.off())
+
+pause()</code></pre>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- Final Boss Level -->
+        <section id="final-boss" class="space-y-4 pb-12">
+            <div class="level-badge bg-slate-900 text-white">🏆 Final Boss Level</div>
+            <div class="card p-6 md:p-8 border-4 border-yellow-400">
+                <h2 class="text-3xl font-extrabold mb-4">Final Challenge: Pedestrian Crossing</h2>
+                <p class="text-slate-700 mb-6">
+                    Imagine a road where the light is always <strong>Green</strong> for cars. 
+                    When a pedestrian (you) presses the <strong>Button</strong>, the light should turn <strong>Red</strong>, the <strong>Buzzer</strong> should beep to say "Walk Now," and then return to Green.
+                </p>
+
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-slate-800 mb-4">The Logic:</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 mb-6">
+                        <li>Normal State: Green LED is ON, Red LED is OFF.</li>
+                        <li>When button pressed: Green turns OFF, Red turns ON.</li>
+                        <li>Buzzer beeps for 5 seconds while Red is ON.</li>
+                        <li>Switch back: Red OFF, Green ON.</li>
+                    </ol>
+
+                    <div class="bg-amber-100 border-l-4 border-amber-500 p-4 mb-6 rounded-r-lg">
+                        <p class="text-amber-800 font-semibold">
+                            💡 Wait! Challenge yourself—try building the code yourself before succumbing to "View Solution Code" :-)
+                        </p>
+                    </div>
+
+                    <details>
+                        <summary>View Solution Code</summary>
+                        <div class="mt-4">
+                            <pre class="code-block"><code>from picozero import LED, Button, Buzzer
+from time import sleep
+
+red = LED(15)
+green = LED(14)
+button = Button(13)
+buzzer = Buzzer(18)
+
+while True:
+    # 1. Normal State
+    green.on()
+    red.off()
+    
+    # 2. Wait for pedestrian
+    print("Waiting for pedestrian...")
+    button.wait_for_press()
+    
+    # 3. Stop the cars!
+    print("Stop! Pedestrian crossing...")
+    green.off()
+    red.on()
+    
+    # 4. Beep while they walk
+    buzzer.beep(on_time=0.2, off_time=0.2, n=10)
+    sleep(2) # Extra time to cross
+    
+    # Loop back to Green</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <p class="text-xl font-bold text-slate-900">🎉 Congratulations!</p>
+                    <p class="text-slate-600">You've built your very first automated traffic system.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-4xl mx-auto py-12 text-center border-t border-slate-200">
+        <p class="text-slate-500 text-sm">Keep building, keep exploring! 🚀</p>
+        <div class="mt-4 flex justify-center space-x-4">
+            <i class="fab fa-raspberry-pi text-red-500 text-2xl"></i>
+            <i class="fab fa-python text-blue-500 text-2xl"></i>
+        </div>
+    </footer>
+
+</body>
+</html>
