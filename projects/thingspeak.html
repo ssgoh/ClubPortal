@@ -199,6 +199,10 @@ while True:
     t = sensor.temperature()
     h = sensor.humidity()
     
+    # Print values to Shell
+    print('Temp ', t)
+    print('Humidity ', h)
+    
     url = f"https://api.thingspeak.com/update?api_key={THINGSPEAK_API_KEY}&field1={t}&field2={h}"
     
     led_data.value(1)
