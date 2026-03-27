@@ -360,8 +360,18 @@ red = LED(15)
 button = Button(13)
 buzzer = Buzzer(18)
 
-button.when_pressed = lambda: (red.on(), buzzer.on())
-button.when_released = lambda: (red.off(), buzzer.off())
+# Define what happens when we use the doorbell
+def start_doorbell():
+    red.on()
+    buzzer.on()
+
+def stop_doorbell():
+    red.off()
+    buzzer.off()
+
+# Link the button events to our functions
+button.when_pressed = start_doorbell
+button.when_released = stop_doorbell
 
 pause()</code></pre>
                     </div>
