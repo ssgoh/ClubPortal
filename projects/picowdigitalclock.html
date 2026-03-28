@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pico W Clock & Temp Display</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .btn-return {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            color: var(--text-main);
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-return:hover {
+            background-color: #334155;
+            border-color: var(--accent);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            border: 1px solid #334155;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Tab Styling */
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            color: #7dd3fc;
+        }
+
+        .code-block {
+            background-color: #020617;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Navigation Header -->
+    <nav class="flex justify-center mb-6">
+        <a href="../index.html" class="btn-return">
+            <i class="fas fa-arrow-left text-[10px] me-2"></i>
+            Return to Home Page
+        </a>
+    </nav>
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold mb-2 tracking-tight">Pico W Digital Clock</h1>
+            <p class="text-slate-400">Time & Temperature Display with TM1637 and DHT11</p>
+        </header>
+
+        <!-- Tabs Navigation -->
+        <div class="flex justify-center border-b border-slate-700 mb-8">
+            <div id="tab-overview" class="tab-btn active" onclick="switchTab('overview')">Overview</div>
+            <div id="tab-wiring" class="tab-btn" onclick="switchTab('wiring')">Wiring</div>
+            <div id="tab-code" class="tab-btn" onclick="switchTab('code')">Source Code</div>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="content-overview" class="tab-content active">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="card p-6 text-center">
+                    <i class="fas fa-clock text-3xl text-sky-400 mb-4"></i>
+                    <h3 class="font-bold mb-2">Dual Display</h3>
+                    <p class="text-sm text-slate-400">Alternates between HH:MM time and Celsius temperature automatically.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <i class="fas fa-laptop text-3xl text-sky-400 mb-4"></i>
+                    <h3 class="font-bold mb-2">Live Testing</h3>
+                    <p class="text-sm text-slate-400">Connected to laptop for easy debugging and automatic time sync via USB.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <i class="fas fa-microchip text-3xl text-sky-400 mb-4"></i>
+                    <h3 class="font-bold mb-2">Pico W Powered</h3>
+                    <p class="text-sm text-slate-400">Leverages the RP2040's I/O capabilities for smooth 7-segment multiplexing.</p>
+                </div>
+            </div>
+            
+            <section class="card">
+                <h2 class="text-xl font-semibold mb-4 text-sky-400">Project Requirements</h2>
+                <ul class="list-disc list-inside space-y-2 text-slate-300">
+                    <li>Raspberry Pi Pico W (USB-connected)</li>
+                    <li>TM1637 4-Digit 7-Segment Display</li>
+                    <li>DHT11 Temperature & Humidity Sensor</li>
+                    <li>MicroPython Firmware</li>
+                    <li>Laptop with Thonny (or similar IDE)</li>
+                </ul>
+            </section>
+        </div>
+
+        <!-- Wiring Tab -->
+        <div id="content-wiring" class="tab-content">
+            <section class="card">
+                <h2 class="text-xl font-semibold mb-6 flex items-center">
+                    <i class="fas fa-project-diagram me-3 text-sky-400"></i> Circuit Connection
+                </h2>
+                
+                <div class="mb-8 overflow-hidden rounded-lg border border-slate-700">
+                    <img src="picowdigitalclock.png" alt="Pico W Wiring Diagram" class="w-full h-auto block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <!-- Fallback if image fails to load -->
+                    <div style="display:none;" class="bg-slate-900 p-12 items-center justify-center flex-col text-slate-500">
+                        <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
+                        <p>Image 'picowdigitalclock.png' not found in folder.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-bold text-sky-400 uppercase tracking-widest">Display Pinout (TM1637)</h3>
+                        <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50">
+                            <table class="w-full text-sm">
+                                <tr class="border-b border-slate-800"><td class="py-2 text-slate-400">CLK</td><td class="py-2 text-right font-mono text-sky-300">GP16 (Pin 21)</td></tr>
+                                <tr class="border-b border-slate-800"><td class="py-2 text-slate-400">DIO</td><td class="py-2 text-right font-mono text-sky-300">GP17 (Pin 22)</td></tr>
+                                <tr class="border-b border-slate-800"><td class="py-2 text-slate-400">VCC</td><td class="py-2 text-right font-mono text-sky-300">3.3V (Pin 36)</td></tr>
+                                <tr><td class="py-2 text-slate-400">GND</td><td class="py-2 text-right font-mono text-sky-300">GND (Pin 38)</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-bold text-sky-400 uppercase tracking-widest">Sensor Pinout (DHT11)</h3>
+                        <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50">
+                            <table class="w-full text-sm">
+                                <tr class="border-b border-slate-800"><td class="py-2 text-slate-400">DATA</td><td class="py-2 text-right font-mono text-sky-300">GP20 (Pin 26)</td></tr>
+                                <tr class="border-b border-slate-800"><td class="py-2 text-slate-400">VCC</td><td class="py-2 text-right font-mono text-sky-300">3.3V OUT</td></tr>
+                                <tr><td class="py-2 text-slate-400">GND</td><td class="py-2 text-right font-mono text-sky-300">GND</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Code Tab -->
+        <div id="content-code" class="tab-content">
+            <section class="card">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-file-code me-2 text-sky-400"></i> main.py
+                    </h2>
+                    <div class="flex gap-2">
+                        <span class="px-2 py-1 bg-slate-900 rounded text-xs text-slate-400 border border-slate-700">MicroPython</span>
+                    </div>
+                </div>
+                
+                <p class="text-sm text-slate-400 mb-4">
+                    Ultra-simplified code for beginners. The time is synced from your laptop automatically.
+                </p>
+
+                <div class="code-block text-sm">
+                    <pre><code>import machine
+import dht
+import time
+import tm1637
+
+# SETUP HARDWARE
+# Display connected to GP16 (CLK) and GP17 (DIO)
+display = tm1637.TM1637(clk=machine.Pin(16), dio=machine.Pin(17))
+# Temperature sensor connected to GP20
+sensor = dht.DHT11(machine.Pin(20))
+
+# Set display brightness
+display.brightness(3)
+
+print("Clock started (using synced laptop time)...")
+
+# MAIN LOOP
+while True:
+    # Get current time. 
+    # Returns a tuple: (year, month, mday, hour, minute, second, weekday, yearday)
+    t = time.localtime()
+
+    # Extract Hour (index 3) and Minute (index 4)
+    hh = t[3]
+    mm = t[4]
+
+    # Show the time for 10 seconds
+    display.numbers(hh, mm, True)  # Colon ON
+    time.sleep(10)
+
+    # Measure and show temperature for 5 seconds
+    try:
+        sensor.measure()
+        temp = sensor.temperature()
+        display.temperature(temp) # Format example: "25 C"
+        time.sleep(5)
+    except:
+        print("Sensor error")
+        time.sleep(1)</code></pre>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <footer class="text-center text-slate-500 text-sm mt-12 pb-8 border-t border-slate-800 pt-8">
+        Built with Pico W SDK &copy; 2024 • Documentation for TM1637/DHT11 Project
+    </footer>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('content-' + tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
