@@ -87,13 +87,14 @@
             <button onclick="setTab('all')" id="tab-all" class="pb-3 text-sm font-bold uppercase tracking-wider tab-active transition-all">All</button>
             <button onclick="setTab('tutorial')" id="tab-tutorial" class="pb-3 text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all">Tutorials</button>
             <button onclick="setTab('project')" id="tab-project" class="pb-3 text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all">Projects</button>
+            <button onclick="setTab('feature')" id="tab-feature" class="pb-3 text-sm font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all">Features</button>
         </div>
     </div>
 
     <main class="max-w-7xl mx-auto px-6 py-8">
         <div id="grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
-            <!-- Row 1 -->
+            <!-- Projects -->
             <div class="card p-8 flex flex-col h-full resource-card" data-type="project">
                 <div class="flex justify-between items-start mb-6">
                     <div class="text-3xl">🚀</div>
@@ -104,6 +105,7 @@
                 <a href="projects/thingspeak.html" class="btn-primary w-full text-center py-4 rounded-xl font-bold">View Project</a>
             </div>
 
+            <!-- Tutorials -->
             <div class="card p-8 flex flex-col h-full resource-card" data-type="tutorial">
                 <div class="flex justify-between items-start mb-6">
                     <div class="text-3xl text-white">📖</div>
@@ -124,7 +126,6 @@
                 <a href="tutorials/register_thingspeak.html" class="btn-secondary w-full text-center py-4 rounded-xl font-bold">View Tutorial</a>
             </div>
 
-            <!-- Row 2 -->
             <div class="card p-8 flex flex-col h-full resource-card" data-type="tutorial">
                 <div class="flex justify-between items-start mb-6">
                     <div class="text-3xl text-white">📖</div>
@@ -155,7 +156,6 @@
                 <a href="tutorials/sg90servo.html" class="btn-secondary w-full text-center py-4 rounded-xl font-bold">View Tutorial</a>
             </div>
 
-            <!-- Row 3 -->
             <div class="card p-8 flex flex-col h-full resource-card" data-type="tutorial">
                 <div class="flex justify-between items-start mb-6">
                     <div class="text-3xl text-white">📖</div>
@@ -176,6 +176,7 @@
                 <a href="tutorials/tm1637_how_to_use.html" class="btn-secondary w-full text-center py-4 rounded-xl font-bold">View Tutorial</a>
             </div>
 
+            <!-- More Projects -->
             <div class="card p-8 flex flex-col h-full resource-card" data-type="project">
                 <div class="flex justify-between items-start mb-6">
                     <div class="text-3xl">🚀</div>
@@ -196,6 +197,17 @@
                 <a href="projects/picowdigitalclock.html" class="btn-secondary w-full text-center py-4 rounded-xl font-bold">View Project</a>
             </div>
 
+            <!-- Example of a Feature (Placeholders) -->
+            <div class="card p-8 flex flex-col h-full resource-card" data-type="feature">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="text-3xl text-white">✨</div>
+                    <span class="tag px-3 py-1 rounded uppercase">Feature</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-white">Upcoming Events</h3>
+                <p class="text-slate-400 text-sm mb-10 flex-grow">Check out our calendar for the next Pi Python Workshop and meetups.</p>
+                <button class="btn-secondary w-full text-center py-4 rounded-xl font-bold opacity-50 cursor-not-allowed">Coming Soon</button>
+            </div>
+
         </div>
     </main>
 
@@ -206,14 +218,16 @@
             currentTab = tab;
             
             // Update Tab UI
-            ['all', 'tutorial', 'project'].forEach(t => {
+            ['all', 'tutorial', 'project', 'feature'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
-                if (t === tab) {
-                    btn.classList.add('tab-active');
-                    btn.classList.remove('text-slate-400');
-                } else {
-                    btn.classList.remove('tab-active');
-                    btn.classList.add('text-slate-400');
+                if (btn) {
+                    if (t === tab) {
+                        btn.classList.add('tab-active');
+                        btn.classList.remove('text-slate-400');
+                    } else {
+                        btn.classList.remove('tab-active');
+                        btn.classList.add('text-slate-400');
+                    }
                 }
             });
 
