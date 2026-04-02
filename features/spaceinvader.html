@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Invaders: Arcade Classic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --primary: #4f46e5;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+
+        .btn-return {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid #334155;
+        }
+
+        .btn-return:hover {
+            background-color: #334155;
+            transform: translateY(-1px);
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .content-card {
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            border: 1px solid #334155;
+            overflow: hidden;
+        }
+
+        pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            background: #000000 !important;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .code-comment { color: #6a9955; }
+        .code-keyword { color: #569cd6; }
+        .code-string { color: #ce9178; }
+        .code-func { color: #dcdcaa; }
+
+        .wiring-placeholder {
+            border: 2px dashed #475569;
+            background: rgba(255,255,255,0.02);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Navigation Header -->
+    <nav class="flex justify-center mb-6">
+        <a href="../index.html" class="btn-return">
+            <i class="fas fa-arrow-left text-[10px] me-2"></i>
+            Return to Home Page
+        </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="text-center max-w-3xl mx-auto mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+            Space Invaders: Arcade Classic
+        </h1>
+        <p class="text-lg text-slate-400">
+            Relive the 1978 phenomenon on the Raspberry Pi Pico W. A deep dive into retro graphics, collision logic, and real-time MicroPython gameplay.
+        </p>
+    </header>
+
+    <main class="max-w-5xl mx-auto">
+        
+        <!-- Tab Navigation -->
+        <div class="flex justify-center border-b border-slate-700 mb-8">
+            <button onclick="showTab('wiring')" id="tab-wiring" class="tab-btn active">
+                <i class="fas fa-microchip me-2"></i>Wiring Diagram
+            </button>
+            <button onclick="showTab('code')" id="tab-code" class="tab-btn">
+                <i class="fas fa-code me-2"></i>Source Code
+            </button>
+            <button onclick="showTab('explanation')" id="tab-explanation" class="tab-btn">
+                <i class="fas fa-book-open me-2"></i>Code Explanation
+            </button>
+        </div>
+
+        <!-- Tab Content: Wiring -->
+        <div id="content-wiring" class="tab-content block">
+            <div class="content-card p-8 text-center">
+                <h2 class="text-2xl font-bold mb-6">Hardware Connections</h2>
+                <div class="wiring-placeholder rounded-lg p-12 mb-6">
+                    <img src="features/spaceinvader.png" alt="Wiring Diagram" class="mx-auto max-w-full h-auto rounded shadow-2xl" onerror="this.parentElement.innerHTML='<div class=\'py-20\'><i class=\'fas fa-image text-6xl text-slate-600 mb-4\'></i><p class=\'text-slate-500\'>Wiring Diagram Image (spaceinvader.png) Placeholder</p></div>'">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-2xl mx-auto">
+                    <div class="bg-slate-800/50 p-4 rounded-lg">
+                        <h3 class="font-bold text-indigo-400 mb-2">I2C OLED (SSD1306)</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>VCC → 3.3V</li>
+                            <li>GND → GND</li>
+                            <li>SDA → GP4</li>
+                            <li>SCL → GP5</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-800/50 p-4 rounded-lg">
+                        <h3 class="font-bold text-indigo-400 mb-2">Control Buttons</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>Left Button → GP14</li>
+                            <li>Right Button → GP15</li>
+                            <li>Shoot Button → GP16</li>
+                            <li>(All buttons connected to GND)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Code -->
+        <div id="content-code" class="tab-content hidden">
+            <div class="content-card">
+                <div class="bg-slate-800 px-4 py-2 flex justify-between items-center border-b border-slate-700">
+                    <span class="text-xs font-mono text-slate-400">main.py</span>
+                    <i class="fab fa-python text-yellow-500"></i>
+                </div>
+                <pre><code><span class="code-keyword">from</span> machine <span class="code-keyword">import</span> Pin, I2C
+<span class="code-keyword">import</span> ssd1306
+<span class="code-keyword">import</span> time
+<span class="code-keyword">import</span> random
+
+<span class="code-comment"># OLED setup</span>
+i2c = I2C(<span class="code-keyword">0</span>, sda=Pin(<span class="code-keyword">4</span>), scl=Pin(<span class="code-keyword">5</span>), freq=<span class="code-keyword">400000</span>)
+oled = ssd1306.SSD1306_I2C(<span class="code-keyword">128</span>, <span class="code-keyword">64</span>, i2c)
+
+<span class="code-comment"># Buttons</span>
+left_btn = Pin(<span class="code-keyword">14</span>, Pin.IN, Pin.PULL_UP)
+right_btn = Pin(<span class="code-keyword">15</span>, Pin.IN, Pin.PULL_UP)
+shoot_btn = Pin(<span class="code-keyword">16</span>, Pin.IN, Pin.PULL_UP)
+
+<span class="code-comment"># Game variables</span>
+player_x = <span class="code-keyword">60</span>
+player_y = <span class="code-keyword">58</span>
+speed = <span class="code-keyword">3</span>
+
+bullet_active = <span class="code-keyword">False</span>
+bullet_x = <span class="code-keyword">0</span>
+bullet_y = <span class="code-keyword">0</span>
+
+score = <span class="code-keyword">0</span>
+game_over = <span class="code-keyword">False</span>
+
+<span class="code-comment"># Create enemies (2 rows)</span>
+enemies = []
+<span class="code-keyword">for</span> row <span class="code-keyword">in</span> <span class="code-func">range</span>(<span class="code-keyword">2</span>):
+    <span class="code-keyword">for</span> col <span class="code-keyword">in</span> <span class="code-func">range</span>(<span class="code-keyword">5</span>):
+        enemies.append([<span class="code-keyword">10</span> + col*<span class="code-keyword">22</span>, <span class="code-keyword">10</span> + row*<span class="code-keyword">12</span>])
+
+enemy_dir = <span class="code-keyword">1</span>
+
+<span class="code-keyword">def</span> <span class="code-func">reset_game</span>():
+    <span class="code-keyword">global</span> player_x, bullet_active, enemies, score, game_over, enemy_dir
+    
+    player_x = <span class="code-keyword">60</span>
+    bullet_active = <span class="code-keyword">False</span>
+    score = <span class="code-keyword">0</span>
+    game_over = <span class="code-keyword">False</span>
+    enemy_dir = <span class="code-keyword">1</span>
+    
+    enemies.clear()
+    <span class="code-keyword">for</span> row <span class="code-keyword">in</span> <span class="code-func">range</span>(<span class="code-keyword">2</span>):
+        <span class="code-keyword">for</span> col <span class="code-keyword">in</span> <span class="code-func">range</span>(<span class="code-keyword">5</span>):
+            enemies.append([<span class="code-keyword">10</span> + col*<span class="code-keyword">22</span>, <span class="code-keyword">10</span> + row*<span class="code-keyword">12</span>])
+
+<span class="code-comment"># Main loop</span>
+<span class="code-keyword">while</span> <span class="code-keyword">True</span>:
+    oled.fill(<span class="code-keyword">0</span>)
+
+    <span class="code-keyword">if not</span> game_over:
+        <span class="code-comment"># Move player</span>
+        <span class="code-keyword">if</span> left_btn.value() == <span class="code-keyword">0</span>:
+            player_x -= speed
+            <span class="code-keyword">if</span> player_x < <span class="code-keyword">0</span>:
+                player_x = <span class="code-keyword">0</span>
+
+        <span class="code-keyword">if</span> right_btn.value() == <span class="code-keyword">0</span>:
+            player_x += speed
+            <span class="code-keyword">if</span> player_x > <span class="code-keyword">120</span>:
+                player_x = <span class="code-keyword">120</span>
+
+        <span class="code-comment"># Shoot</span>
+        <span class="code-keyword">if</span> shoot_btn.value() == <span class="code-keyword">0</span> <span class="code-keyword">and not</span> bullet_active:
+            bullet_x = player_x + <span class="code-keyword">3</span>
+            bullet_y = player_y
+            bullet_active = <span class="code-keyword">True</span>
+
+        <span class="code-comment"># Move bullet</span>
+        <span class="code-keyword">if</span> bullet_active:
+            bullet_y -= <span class="code-keyword">4</span>
+            <span class="code-keyword">if</span> bullet_y < <span class="code-keyword">0</span>:
+                bullet_active = <span class="code-keyword">False</span>
+
+        <span class="code-comment"># Move enemies</span>
+        <span class="code-keyword">for</span> e <span class="code-keyword">in</span> enemies:
+            e[<span class="code-keyword">0</span>] += enemy_dir
+
+        <span class="code-comment"># Bounce + move down</span>
+        <span class="code-keyword">if</span> enemies <span class="code-keyword">and</span> (enemies[<span class="code-keyword">0</span>][<span class="code-keyword">0</span>] < <span class="code-keyword">0</span> <span class="code-keyword">or</span> enemies[-<span class="code-keyword">1</span>][<span class="code-keyword">0</span>] > <span class="code-keyword">120</span>):
+            enemy_dir *= -<span class="code-keyword">1</span>
+            <span class="code-keyword">for</span> e <span class="code-keyword">in</span> enemies:
+                e[<span class="code-keyword">1</span>] += <span class="code-keyword">5</span>
+
+        <span class="code-comment"># Collision detection</span>
+        <span class="code-keyword">for</span> e <span class="code-keyword">in</span> enemies:
+            <span class="code-keyword">if</span> bullet_active:
+                <span class="code-keyword">if</span> <span class="code-func">abs</span>(bullet_x - e[<span class="code-keyword">0</span>]) < <span class="code-keyword">6</span> <span class="code-keyword">and</span> <span class="code-func">abs</span>(bullet_y - e[<span class="code-keyword">1</span>]) < <span class="code-keyword">6</span>:
+                    enemies.remove(e)
+                    bullet_active = <span class="code-keyword">False</span>
+                    score += <span class="code-keyword">10</span>
+                    <span class="code-keyword">break</span>
+
+        <span class="code-comment"># Check game over</span>
+        <span class="code-keyword">for</span> e <span class="code-keyword">in</span> enemies:
+            <span class="code-keyword">if</span> e[<span class="code-keyword">1</span>] > <span class="code-keyword">50</span>:
+                game_over = <span class="code-keyword">True</span>
+
+        <span class="code-comment"># Draw player</span>
+        oled.fill_rect(player_x, player_y, <span class="code-keyword">8</span>, <span class="code-keyword">4</span>, <span class="code-keyword">1</span>)
+
+        <span class="code-comment"># Draw enemies</span>
+        <span class="code-keyword">for</span> e <span class="code-keyword">in</span> enemies:
+            oled.fill_rect(e[<span class="code-keyword">0</span>], e[<span class="code-keyword">1</span>], <span class="code-keyword">6</span>, <span class="code-keyword">4</span>, <span class="code-keyword">1</span>)
+
+        <span class="code-comment"># Draw bullet</span>
+        <span class="code-keyword">if</span> bullet_active:
+            oled.pixel(bullet_x, bullet_y, <span class="code-keyword">1</span>)
+
+        <span class="code-comment"># Draw score</span>
+        oled.text(<span class="code-string">"Score: {}"</span>.<span class="code-func">format</span>(score), <span class="code-keyword">0</span>, <span class="code-keyword">0</span>)
+
+        <span class="code-comment"># Win condition</span>
+        <span class="code-keyword">if not</span> enemies:
+            oled.text(<span class="code-string">"YOU WIN!"</span>, <span class="code-keyword">30</span>, <span class="code-keyword">30</span>)
+            game_over = <span class="code-keyword">True</span>
+
+    <span class="code-keyword">else</span>:
+        oled.text(<span class="code-string">"GAME OVER"</span>, <span class="code-keyword">25</span>, <span class="code-keyword">20</span>)
+        oled.text(<span class="code-string">"Score: {}"</span>.<span class="code-func">format</span>(score), <span class="code-keyword">25</span>, <span class="code-keyword">35</span>)
+        oled.text(<span class="code-string">"Press SHOOT"</span>, <span class="code-keyword">15</span>, <span class="code-keyword">50</span>)
+
+        <span class="code-comment"># Restart</span>
+        <span class="code-keyword">if</span> shoot_btn.value() == <span class="code-keyword">0</span>:
+            time.sleep(<span class="code-keyword">0.3</span>)
+            reset_game()
+
+    oled.show()
+    time.sleep(<span class="code-keyword">0.03</span>)</code></pre>
+            </div>
+        </div>
+
+        <!-- Tab Content: Explanation -->
+        <div id="content-explanation" class="tab-content hidden">
+            <div class="content-card p-8">
+                <h2 class="text-2xl font-bold mb-6 border-b border-slate-700 pb-2">Technical Analysis</h2>
+                
+                <div class="space-y-8">
+                    <section>
+                        <h3 class="text-lg font-semibold text-indigo-400 mb-2">1. Initialization & Assets</h3>
+                        <p class="text-slate-300">
+                            The code begins by configuring the I2C bus at 400kHz for the SSD1306 display. Buttons are initialized with <code>PULL_UP</code> resistors, meaning they read <code>0</code> when pressed. The enemies are stored as a list of lists, where each sub-list <code>[x, y]</code> represents a single invader.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h3 class="text-lg font-semibold text-indigo-400 mb-2">2. Movement & Boundary Logic</h3>
+                        <p class="text-slate-300">
+                            The player is constrained between coordinates 0 and 120 to stay on screen. The enemies move horizontally using an <code>enemy_dir</code> variable. When any invader hits the screen edge, the direction is flipped (multiplied by -1) and the entire row drops down 5 pixels, increasing the difficulty.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h3 class="text-lg font-semibold text-indigo-400 mb-2">3. Collision Detection</h3>
+                        <p class="text-slate-300">
+                            Collision is calculated using a simple 2D bounding box method. If the absolute difference between the bullet coordinates and an enemy's coordinates is less than 6 pixels, a hit is registered. The enemy is removed from the list, the bullet is deactivated, and the score increments.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h3 class="text-lg font-semibold text-indigo-400 mb-2">4. Rendering Pipeline</h3>
+                        <p class="text-slate-300">
+                            The game uses a "Clear-Update-Draw-Show" loop. 
+                            <ul class="list-disc ml-6 mt-2 text-slate-400 space-y-1">
+                                <li><code>oled.fill(0)</code> clears the previous frame.</li>
+                                <li>Rectangles and pixels represent the player and projectiles.</li>
+                                <li><code>oled.show()</code> pushes the buffer to the physical screen.</li>
+                                <li><code>time.sleep(0.03)</code> maintains a smooth framerate of ~30 FPS.</li>
+                            </ul>
+                        </p>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected content and activate button
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('content-' + tabId).classList.add('block');
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
