@@ -155,7 +155,7 @@
 
         <!-- Step 3: Download Firmware -->
         <div class="mb-12 flex flex-col md:flex-row items-center gap-8">
-            <div class="w-full md:w-1/2 step-card bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+            <div class="w-full md:w-1/2 step-card bg-white p-8 rounded-3xl border border-slate-100 shadow-sm =">
                 <div class="w-12 h-12 bg-green-100 text-green-700 rounded-2xl flex items-center justify-center font-bold text-xl mb-6">3</div>
                 <h3 class="text-2xl font-bold mb-4">Download MicroPython</h3>
                 <p class="text-slate-600 leading-relaxed mb-4">
@@ -169,7 +169,7 @@
                         </div>
                         <!-- Added Image Under Step A -->
                         <div class="mt-3 ml-9 rounded-lg border border-slate-200 overflow-hidden shadow-sm bg-slate-100">
-                            <img src="flashinguf2.png" alt="Official MicroPython Tab Selection" class="w-full h-auto block" onerror="this.parentElement.innerHTML='<div class=\'p-4 text-center text-xs text-slate-400 italic font-mono bg-slate-50\'>[ Image: flashinguf2.png ]<br>Visual reference for MicroPython tab selection</div>'">
+                            <img src="tutorials/flashinguf2.png" alt="Official MicroPython Tab Selection" class="w-full h-auto block" onerror="this.parentElement.innerHTML='<div class=\'p-4 text-center text-xs text-slate-400 italic font-mono bg-slate-50\'>[ Image: flashinguf2.png ]<br>Visual reference for MicroPython tab selection</div>'">
                         </div>
                     </li>
                     <li class="flex items-start">
@@ -281,6 +281,42 @@
                          </div>
                          <div class="mt-12 text-[10px] text-slate-300">Python Shell...</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 6: Breadboard Hardware Setup -->
+        <div class="mb-12 flex flex-col md:flex-row-reverse items-center gap-8">
+            <div class="w-full md:w-1/2 step-card bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-2xl flex items-center justify-center font-bold text-xl mb-6">6</div>
+                <h3 class="text-2xl font-bold mb-4">Breadboard Hardware Setup</h3>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                    Correctly placing your Pico 2 W on a breadboard prevents electrical shorts and makes prototyping much easier.
+                </p>
+                <ol class="space-y-4 mb-6">
+                    <li class="flex items-start">
+                        <span class="bg-teal-50 text-teal-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-1 text-xs font-bold shrink-0">1</span>
+                        <span><strong>Position the Board:</strong> Place the Pico 2 W directly over the center divider channel of the breadboard, making sure each row of pins is split cleanly across the middle. Press down firmly.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-teal-50 text-teal-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-1 text-xs font-bold shrink-0">2</span>
+                        <span><strong>Attach Pinout Stickers:</strong> Carefully stick your pin number labels on the breadboard rows adjacent to the Pico's pins for quick visual referencing.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-teal-50 text-teal-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-1 text-xs font-bold shrink-0">3</span>
+                        <span><strong>Wire up Power & Ground:</strong> Use short jumper wires to establish your baseline connections:
+                            <ul class="list-disc ml-6 mt-2 text-slate-600 space-y-1">
+                                <li>Connect the <strong>3.3V(OUT)</strong> pin to the red positive (+) power rail.</li>
+                                <li>Connect a <strong>GND</strong> pin to the blue negative (-) ground rail.</li>
+                            </ul>
+                        </span>
+                    </li>
+                </ol>
+            </div>
+            <div class="w-full md:w-1/2">
+                <!-- Image Container with Fallback Graphic -->
+                <div class="rounded-2xl border border-slate-200 overflow-hidden shadow-md bg-white p-2">
+                    <img src="tutorials/picoandbreadboardsetup.png" alt="Raspberry Pi Pico 2 W Breadboard Configuration" class="w-full h-auto rounded-xl block" onerror="this.parentElement.innerHTML='<div class=\'p-8 text-center text-xs text-slate-500 font-sans bg-slate-50 flex flex-col items-center justify-center min-h-[250px]\'><i class=\'fas fa-microchip text-4xl text-teal-500 mb-3 animate-pulse\'></i><strong class=\'text-slate-700 font-bold text-sm mb-1\'>[ Diagram: picoandbreadboardsetup.png ]</strong><p class=\'max-w-xs text-slate-500 mt-1 leading-relaxed\'>Illustrating the Pico 2 W bridging the center channel, pinout sticker placement, and running red (3.3V) & black (GND) jumper wires to the breadboard side rails.</p></div>'">
                 </div>
             </div>
         </div>
