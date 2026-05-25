@@ -314,9 +314,9 @@
                 </ol>
             </div>
             <div class="w-full md:w-1/2">
-                <!-- Image Container with Fallback Graphic -->
+                <!-- Image Container with Auto-Healing Fallback Logic -->
                 <div class="rounded-2xl border border-slate-200 overflow-hidden shadow-md bg-white p-2">
-                    <img src="tutorials/picoandbreadboardsetup.png" alt="Raspberry Pi Pico 2 W Breadboard Configuration" class="w-full h-auto rounded-xl block" onerror="this.parentElement.innerHTML='<div class=\'p-8 text-center text-xs text-slate-500 font-sans bg-slate-50 flex flex-col items-center justify-center min-h-[250px]\'><i class=\'fas fa-microchip text-4xl text-teal-500 mb-3 animate-pulse\'></i><strong class=\'text-slate-700 font-bold text-sm mb-1\'>[ Diagram: picoandbreadboardsetup.png ]</strong><p class=\'max-w-xs text-slate-500 mt-1 leading-relaxed\'>Illustrating the Pico 2 W bridging the center channel, pinout sticker placement, and running red (3.3V) & black (GND) jumper wires to the breadboard side rails.</p></div>'">
+                    <img src="tutorials/picoandbreadboardsetup.png" alt="Raspberry Pi Pico 2 W Breadboard Configuration" class="w-full h-auto rounded-xl block" onerror="if(this.src.indexOf('tutorials/') !== -1){ this.src='picoandbreadboardsetup.png'; } else { this.parentElement.innerHTML='<div class=\'p-8 text-center text-xs text-slate-500 font-sans bg-slate-50 flex flex-col items-center justify-center min-h-[250px]\'><i class=\'fas fa-microchip text-4xl text-teal-500 mb-3 animate-pulse\'></i><strong class=\'text-slate-700 font-bold text-sm mb-1\'>[ Diagram: picoandbreadboardsetup.png ]</strong><p class=\'max-w-xs text-slate-500 mt-1 leading-relaxed\'>Illustrating the Pico 2 W bridging the center channel, pinout sticker placement, and running red (3.3V) & black (GND) jumper wires to the breadboard side rails.</p></div>'; }">
                 </div>
             </div>
         </div>
