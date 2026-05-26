@@ -167,9 +167,9 @@
                             <span class="bg-slate-100 text-slate-700 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-1 text-xs font-bold shrink-0">A</span>
                             <span>Click the <strong>MicroPython</strong> tab.</span>
                         </div>
-                        <!-- Added Image Under Step A -->
+                        <!-- Added Image Under Step A with Auto-Healing Fallback Logic -->
                         <div class="mt-3 ml-9 rounded-lg border border-slate-200 overflow-hidden shadow-sm bg-slate-100">
-                            <img src="tutorials/flashinguf2.png" alt="Official MicroPython Tab Selection" class="w-full h-auto block" onerror="this.parentElement.innerHTML='<div class=\'p-4 text-center text-xs text-slate-400 italic font-mono bg-slate-50\'>[ Image: flashinguf2.png ]<br>Visual reference for MicroPython tab selection</div>'">
+                            <img src="tutorials/flashinguf2.png" alt="Official MicroPython Tab Selection" class="w-full h-auto block" onerror="if(this.src.indexOf('tutorials/') !== -1){ this.src='flashinguf2.png'; } else { this.parentElement.innerHTML='<div class=\'p-4 text-center text-xs text-slate-400 italic font-mono bg-slate-50\'>[ Image: flashinguf2.png ]<br>Visual reference for MicroPython tab selection</div>'; }">
                         </div>
                     </li>
                     <li class="flex items-start">
