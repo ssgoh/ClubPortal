@@ -1,5 +1,5 @@
 git config user.email "iamssgoh@gmail.com"
-git remote set-url origin https://github.com
+git remote set-url origin https://github.com/ssgoh/ClubPortal
 git add .
 git commit -m "Add portal, projects, tutorials, and security shield"
 git push origin main
